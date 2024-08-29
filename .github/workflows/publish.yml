@@ -3,7 +3,8 @@ name: Build and Publish Docker Image
 on:
   push:
     branches:
-      - feature/NU-1740
+      - master
+      - staging
 
 jobs:
   build:

@@ -11,20 +11,6 @@ CMD ["/sbin/my_init"]
 
 WORKDIR /app
 
-COPY scenario-examples-bootstrapper/setup/ /app/setup/
-COPY scenario-examples-bootstrapper/mocks/ /app/mocks/
-COPY scenario-examples-bootstrapper/data/ /app/data/
-COPY scenario-examples-bootstrapper/utils/ /app/utils/
-COPY scenario-examples-bootstrapper/run-mocks-setup-data.sh /app/run-mocks-setup-data.sh
-
-COPY scenario-examples-bootstrapper/services/postgres.sh /etc/service/db/run
-COPY scenario-examples-bootstrapper/services/wiremock.sh /etc/service/http-service/run
-COPY scenario-examples-bootstrapper/services/setup.sh /etc/service/setup/run
-
-# WIREMOCK & POSTGRES
-COPY --from=wiremock /var/wiremock /var/wiremock
-COPY --from=wiremock /home/wiremock /home/wiremock
-
 USER root
 
 RUN apt update && \
@@ -38,8 +24,22 @@ RUN apt update && \
     apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     curl https://raw.githubusercontent.com/birdayz/kaf/master/godownloader.sh | BINDIR=/bin bash 
 
+# WIREMOCK & POSTGRES
+COPY --from=wiremock /var/wiremock /var/wiremock
+COPY --from=wiremock /home/wiremock /home/wiremock
+
 EXPOSE 8080
 EXPOSE 5432
+
+COPY scenario-examples-bootstrapper/setup/ /app/setup/
+COPY scenario-examples-bootstrapper/mocks/ /app/mocks/
+COPY scenario-examples-bootstrapper/data/ /app/data/
+COPY scenario-examples-bootstrapper/utils/ /app/utils/
+COPY scenario-examples-bootstrapper/run-mocks-setup-data.sh /app/run-mocks-setup-data.sh
+
+COPY scenario-examples-bootstrapper/services/postgres.sh /etc/service/db/run
+COPY scenario-examples-bootstrapper/services/wiremock.sh /etc/service/http-service/run
+COPY scenario-examples-bootstrapper/services/setup.sh /etc/service/setup/run
 
 COPY scenario-examples-library/ /scenario-examples
 
