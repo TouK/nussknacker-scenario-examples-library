@@ -10,3 +10,5 @@ https://docs.wiremock.io/response-templating/dates-and-times/
 - delete
 - write about disabling examples (eg. LOAN_REQUEST_DISABLED: true)
 - write about required envs: NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS, SCHEMA_REGISTRY_ADDRESS, KAFKA_ADDRESS, NU_DESIGNER_ADDRESS
+- write about additional-configuration.conf
+- 

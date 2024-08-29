@@ -1,0 +1,40 @@
+services:
+
+  example-scenarios-library:
+    build:
+      context: ../../../../
+      dockerfile: Dockerfile
+      no_cache: true
+    depends_on:
+      nginx:
+        condition: service_healthy
+      designer:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      schema-registry:
+        condition: service_healthy
+    environment:
+      EXAMPLE_SCENARIOS_LIBRARY_SERVICE_NAME: example-scenarios-library
+      NU_DESIGNER_ADDRESS: "nginx:8080"
+      NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS: "nginx:8181"
+      KAFKA_ADDRESS: "kafka:9092"
+      SCHEMA_REGISTRY_ADDRESS: "schema-registry:8081"
+    volumes:
+      - nussknacker_designer_shared_configuration:/opt/nussknacker/conf/
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+
+  designer: 
+    image: touk/nussknacker:staging-latest_scala-2.12 # TODO: remove when Nu 1.17 is released
+    environment:
+      CONFIG_FILE: "/opt/nussknacker/conf/application.conf,/opt/nussknacker/conf/additional-configuration.conf,/opt/nussknacker/conf/application-customizations.conf"
+    volumes:
+      - nussknacker_designer_shared_configuration:/opt/nussknacker/conf/
+  
+volumes:
+  nussknacker_designer_shared_configuration:
+    name: nussknacker_designer_shared_configuration

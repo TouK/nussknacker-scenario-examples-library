@@ -11,7 +11,7 @@ fi
 
 SCENARIO_EXAMPLE_DIR_PATH=${1%/}
 CONFS_DIR=/opt/nussknacker/conf
-APP_CUSTOMIZATION_FILE_PATH="$CONFS_DIR/application-customizations.conf"
+APP_CUSTOMIZATION_FILE_PATH="$CONFS_DIR/additional-configuration.conf"
 
 function customize_nu_configuration() {
   if [ "$#" -ne 2 ]; then
