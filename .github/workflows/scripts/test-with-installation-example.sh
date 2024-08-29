@@ -7,7 +7,7 @@ git clone https://github.com/TouK/nussknacker-installation-example.git
 cd nussknacker-installation-example
 
 function cleanup() {
-  docker compose -f docker-compose.yml -f ../example-scenarios-library.override.yml logs example-scenarios-library
+  docker compose -f docker-compose.yml -f ../example-scenarios-library.override.yml logs
   docker compose -f docker-compose.yml -f ../example-scenarios-library.override.yml down -v 
 }
 
