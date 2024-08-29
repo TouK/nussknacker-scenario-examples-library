@@ -2,8 +2,8 @@
 
 cd "$(dirname "$0")"
 
-# rm -rf nussknacker-installation-example
-# git clone https://github.com/TouK/nussknacker-installation-example.git
+rm -rf nussknacker-installation-example
+git clone https://github.com/TouK/nussknacker-installation-example.git
 cd nussknacker-installation-example
 
 function cleanup() {
