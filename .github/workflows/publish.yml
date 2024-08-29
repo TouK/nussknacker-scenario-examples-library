@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - staging
+      - feature/NU-1740
 
 jobs:
   build:
