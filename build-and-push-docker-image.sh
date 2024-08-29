@@ -6,4 +6,4 @@ source ./version
 
 ./build-docker-image.sh
 
-docker push "touk/nussknacker-example-scenarios-library${LIBRARY_DOCKER_IMAGE_VERSION}"
+docker push "touk/nussknacker-example-scenarios-library:${LIBRARY_DOCKER_IMAGE_VERSION}"
