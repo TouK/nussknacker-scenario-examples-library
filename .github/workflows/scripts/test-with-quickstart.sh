@@ -12,7 +12,7 @@ cd .github/workflows/scripts
 rm -rf nussknacker-quickstart
 git clone https://github.com/TouK/nussknacker-quickstart.git
 cd nussknacker-quickstart
-git checkout -b staging # TODO: change to main when Nu 1.17 is released
+git checkout change/NU-1740_use_scenarios_example_lib_docker_image # TODO: change to main when Nu 1.17 is released
 
 echo "3. Setting proper Scenario Examples Library image version..."
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -26,7 +26,9 @@ on_error() {
 }
 
 on_exit() {
+  echo "4. Cleanup"
   ./stop-and-clean.sh
+  rm -rf ../nussknacker-quickstart
 }
 
 trap on_error ERR

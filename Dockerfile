@@ -41,7 +41,7 @@ COPY scenario-examples-bootstrapper/services/postgres.sh /etc/service/db/run
 COPY scenario-examples-bootstrapper/services/wiremock.sh /etc/service/http-service/run
 COPY scenario-examples-bootstrapper/services/setup.sh /etc/service/setup/run
 
-COPY scenario-examples-library/ /scenario-examples
+COPY scenario-examples-library/ /tmp/scenario-examples
 
 HEALTHCHECK --interval=10s --timeout=1s --retries=12 --start-period=30s \
   CMD (/app/setup/is-setup-done.sh && /app/mocks/db/is-postgres-ready.sh && /app/mocks/http-service/is-wiremock-ready.sh) || exit 1

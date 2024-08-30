@@ -97,3 +97,11 @@ function is_scenario_enabled() {
 
   return 0
 }
+
+function is_embedded_examples_active() {
+  if [[ "${DISABLE_EMBDEDED_EXAMPLES,,}" == "true" ]]; then
+    return 1
+  else 
+    return 0
+  fi
+}
