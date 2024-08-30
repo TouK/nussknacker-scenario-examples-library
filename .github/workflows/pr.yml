@@ -14,4 +14,4 @@ jobs:
 
     - name: Build and test
       run: |
-        .github/workflows/scripts/test-with-installation-example.sh
+        .github/workflows/scripts/test-with-nu-quickstart.sh
