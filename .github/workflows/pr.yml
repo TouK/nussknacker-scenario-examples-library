@@ -3,6 +3,9 @@ name: PR Workflow
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - master
 
 jobs:
   build:
