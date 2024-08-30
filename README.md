@@ -134,4 +134,140 @@ To see the example in action, some data has to be provided. This is why Bootstra
 
 ## Creating an example scenario
 
-// todo:
+Structure for a folder with a Scenario Example definition:
+
+```bash
+scenario-examples-library
+├── {scenario-example-1} # folder with all things needed by the example scenario
+│   ├── {name-of-scenario-example-1}.json # file with scenario (required)
+│   ├── data # static data and data generator scripts (optional)
+│   │   ├── kafka
+│   │   │   ├── generated
+│   │   │   │   └── {topic-01-name}.sh # script to generate message which will be sent to the topic "topic-01-name" (it will be called continuously)
+│   │   │   └── static
+│   │   │       └── {topic-01-name}.txt # list of messages which will be sent to topic "topic-01-name" (to send only once)
+│   │   └── http
+│   │       ├── generated
+│   │       │   └── {open-api-service-slug}.sh # script to generate request body which will be sent with POST request to /scenarios/{open-api-service-slug} service (it will be called continuously)
+│   │       └── static
+│   │           └── {open-api-service-slug}.txt # list of request bodies which will be sent with POST request to /scenarios/{open-api-service-slug} service (to send only once)
+│   ├── mocks # mock definitions (optional)
+│   │   └── db 
+│   │       ├── {db-schema-02-name}.sql # script with DDLs to import 
+│   │       └── {db-schema-02-name}.sql
+│   │   └── http-service
+│   │       └── {external-open-api-service-name} # name of an external Open API service
+│   │           ├── __files
+│   │           │   └── {external-open-api-service-name}
+│   │           │       ├── openapi
+│   │           │       │   └── {api-name}.yaml # it contains the external Open API service definitions. Exposed as Wiremock's static files
+│   │           │       └── responses
+│   │           │           ├── {some-response-01-name}.json # contains mock response - it can be used in the mapping definition
+│   │           │           └── {some-response-02-name}.json
+│   │           └── mappings
+│   │               └── {external-open-api-service-name}
+│   │                   ├── {endpoint-1-mapping}.json # definition of Wiremock's mappings - it describes how the mock service should respond
+│   │                   └── {endpoint-2-mapping}.json
+│   └── setup # setup Nu Designer configuration, Kafka's topics ans JSON schemas (optional)
+│       ├── kafka
+│       │   └── topics.txt # it contains list of topics name which should be created (topic per line)
+│       ├── nu-designer
+│       │   ├── {some-configuration-01-name}.conf # it contains part of Nu configuration (it's HOCON file)
+│       │   └── {some-configuration-02-name}.conf
+│       └── schema-registry
+│           ├── {topic-01-name}.schema.json # it contains JSON schema definition for topic "topic-01-name"
+│           └── {topic-02-name}.schema.json
+└── {scenario-example-2} # the next scenario
+    ├── [...]
+```
+
+### Scenario JSON
+
+It's a representation of a Scenario in form of JSON. Nu Designer should be able to import it. The name of the file with the scenario 
+is going to be used by the Bootstrapper during empty scenario creation. It should be unique.
+
+### Scenario setup
+
+#### Nu Designer configuration
+
+If you want to add custom configuration you can create a HOCON file and add it in `{scenario-name}/setup/nu-designer` folder. 
+In the file you can refer to mock services using the `EXAMPLE_SCENARIOS_LIBRARY_SERVICE_NAME` variable. 
+E.g. PostgresSQL DB address is `${EXAMPLE_SCENARIOS_LIBRARY_SERVICE_NAME}:5432` and the Wiremock server address is 
+`${EXAMPLE_SCENARIOS_LIBRARY_SERVICE_NAME}:8080`. 
+
+> :warning: Your configuration files will be included in the `additional-configuration.conf`. You have to be sure that the `additional-configuration.conf` can be writeable by the Library service and readable by the Nu Designer service.
+
+#### Kafka topics
+
+You list all topics which are used by the scenario in the `{scenario-name}/setup/kafka/topics.txt` file. All the topics will be created before deploying the scenario. The format of the file looks like the following:
+
+```text
+CustomerEvents
+OfferProposalsBasedOnCustomerEvents
+
+```
+
+#### JSON Schemas for Kafka topics
+
+For each defined topic you should provide a JSON schema. You add schemas in the `{scenario-name}/setup/schema-registry` folder. Name format 
+for a schema file is `{topic-01-name}.schema.json`. It means that the schema will be added for a topic `{topic-01-name}. 
+
+### Scenario external services mocks
+
+Some scenarios can use components that call external services like database or Open API HTTP service. In this case you need to provide
+mocks which will pretend to be real services.
+
+#### DB mocks
+
+DB mocks should be added to the `{scenario-name}/mocks/db` folder. The mocks has a form of PostgreSQL DDL scripts. Name of the script will 
+be used a schema in the database (all scripts will be run in context of the same PostgreSQL db instance). 
+
+Assuming that your db mock is `{scenario-name}/mocks/db/example01.sql`, you should be able to refer to it like that:
+
+```hocon
+# Nu Designer configuration
+db {
+  driverClassName: "org.postgresql.Driver"
+  url: "jdbc:postgresql://"${EXAMPLE_SCENARIOS_LIBRARY_SERVICE_NAME}":5432/mocks"
+  username: "mocks"
+  password: "mocks_pass"
+  schema: "example01"
+}
+```
+
+See the `scenario-examples-library/rtm-client-near-pos` example. 
+
+#### OpenAPI mocks
+
+OpenAPI mocks should be added in the  `{scenario-name}/mocks/http-service` folder. Mock for singe API contains the service OpenAPI definition (placed in the `{scenario-name}/mocks/http-service/{service-name}/__files/{service-name}/openapi` folder) and Wiremock's mappings (placed in the 
+`{scenario-name}/mocks/http-service/{service-name}/mappings/{service-name}` folder). Sometimes in the mappings you can refer to static files. These files can be added to the `{scenario-name}/mocks/http-service/{service-name}/__files/{service-name}/responses` folder.
+
+Assuming that your OpenAPI mock is `{scenario-name}/mocks/http-service/{service-name}`, you should be able to refer to it like that:
+
+```hocon
+# Nu Designer configuration
+
+        # OpenAPI enricher
+        "customerProfileOffers" {
+          providerType: "openAPI"
+          url: "http://"${EXAMPLE_SCENARIOS_LIBRARY_SERVICE_NAME}":8080/__admin/files/customer-api/openapi/CustomerApi.yaml"
+          rootUrl: "http://"${EXAMPLE_SCENARIOS_LIBRARY_SERVICE_NAME}":8080/"
+          namePattern: "get.*"
+          allowedMethods: ["GET"]
+        }
+```
+
+See the `scenario-examples-library/offer-customer-proposal-based-on-activity-event` example.
+
+Check out the following resources to see how to create Wiremock mappings:
+https://github.com/wiremock/wiremock-faker-extension/blob/main/docs/reference.md
+https://docs.wiremock.io/response-templating/basics/
+https://docs.wiremock.io/response-templating/dates-and-times/
+
+### Example data for scenario showcase
+
+???
+
+# todo: 
+- write about disabling examples (eg. LOAN_REQUEST_DISABLED: true)
+- write about disable all
