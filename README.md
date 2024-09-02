@@ -93,6 +93,27 @@ In the docker compose case (see the example above) to achieve it, you should:
 1. create a shared configuration volume and mount it in `nu-example-scenarios-library` and `designer` services
 2. include `/opt/nussknacker/conf/additional-configuration.conf` in the `CONFIG_FILE` ENV value
 
+### Other configuration
+
+#### Using Scenario Examples Bootstrapper with scenario defined outside
+
+You don't have to put your scenario is the Library to be able to use it with the Scenario Examples Bootstapper. All you need to do is to mount
+your example from e.g. `my-scenario` folder to `/scenario-examples/my-scenario` in the container. Your scenario will be read and bootstrapped.
+
+#### Disabling specific example scenarios
+
+You can disable a specific example by setting e.g. `LOAN_REQUEST_DISABLED: true` - this ENV disables `loan-request` scenario example. 
+So, all you need to do is to take name of your example (the example's folder name), change `-` to `_`, uppercase it and add `_DISABLED` - 
+it gives you the name of the ENV. Don't forget to set `true` as its value.
+
+#### Disabling all (embedded) example scenarios
+
+You can disable all examples embedded into library by setting `DISABLE_EMBEDDED_EXAMPLES: true`.
+
+#### Disabling data generation for all scenarios
+
+You can disable only data generation for all the examples from the library by setting `DISABLE_DATA_GENERATION: true`
+
 ## What's underneath and how it works
 
 ### Scenario Examples Library
@@ -261,7 +282,9 @@ See the `scenario-examples-library/offer-customer-proposal-based-on-activity-eve
 
 Check out the following resources to see how to create Wiremock mappings:
 https://github.com/wiremock/wiremock-faker-extension/blob/main/docs/reference.md
+
 https://docs.wiremock.io/response-templating/basics/
+
 https://docs.wiremock.io/response-templating/dates-and-times/
 
 ### Example data for scenario showcase
