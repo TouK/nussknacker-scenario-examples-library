@@ -97,7 +97,7 @@ In the docker compose case (see the example above) to achieve it, you should:
 
 #### Using Scenario Examples Bootstrapper with scenario defined outside
 
-You don't have to put your scenario is the Library to be able to use it with the Scenario Examples Bootstapper. All you need to do is to mount
+You don't have to put your scenario in the Library to be able to use it with the Scenario Examples Bootstapper. All you need to do is to mount
 your example from e.g. `my-scenario` folder to `/scenario-examples/my-scenario` in the container. Your scenario will be read and bootstrapped.
 
 #### Disabling specific example scenarios
@@ -174,7 +174,7 @@ scenario-examples-library
 │   │           └── {open-api-service-slug}.txt # list of request bodies which will be sent with POST request to /scenarios/{open-api-service-slug} service (to send only once)
 │   ├── mocks # mock definitions (optional)
 │   │   └── db 
-│   │       ├── {db-schema-02-name}.sql # script with DDLs to import 
+│   │       ├── {db-schema-01-name}.sql # script with DDLs to import 
 │   │       └── {db-schema-02-name}.sql
 │   │   └── http-service
 │   │       └── {external-open-api-service-name} # name of an external Open API service
@@ -241,7 +241,7 @@ mocks which will pretend to be real services.
 #### DB mocks
 
 DB mocks should be added to the `{scenario-name}/mocks/db` folder. The mocks has a form of PostgreSQL DDL scripts. Name of the script will 
-be used a schema in the database (all scripts will be run in context of the same PostgreSQL db instance). 
+be used as a schema in the database (all scripts will be run in context of the same PostgreSQL db instance). 
 
 Assuming that your db mock is `{scenario-name}/mocks/db/example01.sql`, you should be able to refer to it like that:
 
@@ -260,7 +260,7 @@ See the `scenario-examples-library/rtm-client-near-pos` example.
 
 #### OpenAPI mocks
 
-OpenAPI mocks should be added in the  `{scenario-name}/mocks/http-service` folder. Mock for singe API contains the service OpenAPI definition (placed in the `{scenario-name}/mocks/http-service/{service-name}/__files/{service-name}/openapi` folder) and Wiremock's mappings (placed in the 
+OpenAPI mocks should be added in the `{scenario-name}/mocks/http-service` folder. Mock for single API contains the service OpenAPI definition (placed in the `{scenario-name}/mocks/http-service/{service-name}/__files/{service-name}/openapi` folder) and Wiremock's mappings (placed in the 
 `{scenario-name}/mocks/http-service/{service-name}/mappings/{service-name}` folder). Sometimes in the mappings you can refer to static files. These files can be added to the `{scenario-name}/mocks/http-service/{service-name}/__files/{service-name}/responses` folder.
 
 Assuming that your OpenAPI mock is `{scenario-name}/mocks/http-service/{service-name}`, you should be able to refer to it like that:
@@ -385,8 +385,3 @@ The file contains request payload per line.
   {"customerId": "3", "requestedAmount": 2000, "requestType": "loan", "location": { "city": "Lublin", "street": "Głęboka" }}
   ```
 </details>
-
-# todo: 
-- write about disabling examples (eg. LOAN_REQUEST_DISABLED: true)
-- write about disable all
-- disable data generation
