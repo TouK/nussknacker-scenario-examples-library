@@ -4,8 +4,8 @@ cd "$(dirname "$0")"
 
 source ../lib.sh
 
-if [ "$#" -ne 2 ]; then
-  red_echo "ERROR: Two parameters required: 1) topic name, 2) messages (message per line)\n"
+if [ "$#" -ne 1 ]; then
+  red_echo "ERROR: One parameter required: 1) topic name\n"
   exit 1
 fi
 
@@ -15,10 +15,9 @@ if ! [ -v KAFKA_ADDRESS ] || [ -z "$KAFKA_ADDRESS" ]; then
 fi
 
 TOPIC_NAME=$1
-MESSAGES=$2
 
 if kaf --brokers="$KAFKA_ADDRESS" topics ls | awk '{print $1}' | grep "^$TOPIC_NAME$" > /dev/null 2>&1; then
-  echo "$MESSAGES" | kaf --brokers="$KAFKA_ADDRESS" produce "$TOPIC_NAME" > /dev/null
+  kaf --brokers="$KAFKA_ADDRESS" consume "$TOPIC_NAME" --offset oldest --output raw
 else
   red_echo "ERROR: Topic name '$TOPIC_NAME' not found\n"
   exit 3

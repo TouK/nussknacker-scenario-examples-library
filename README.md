@@ -114,6 +114,12 @@ You can disable all examples embedded into library by setting `DISABLE_EMBEDDED_
 
 You can disable only data generation for all the examples from the library by setting `DISABLE_DATA_GENERATION: true`
 
+#### Disabling scenario deployment
+
+You can disable scenario deployment (in fact, the scenario will be deployed but then it will be canceled) for a specific
+example by setting e.g. `LOAN_REQUEST_DEPLOY: false` - this ENV ensures that the `loan-request' scenario example is not 
+active when the data data generation is started.
+
 ## What's underneath and how it works
 
 ### Scenario Examples Library
