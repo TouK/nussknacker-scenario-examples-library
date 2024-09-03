@@ -4,9 +4,9 @@ cd "$(dirname "$0")"
 
 source ../utils/lib.sh
 
-shopt -s nullglob
-
 magenta_echo "-------- SETUP STAGE is starting... -------\n"
+
+shopt -s nullglob
 
 for FOLDER in /scenario-examples/*; do
   if is_scenario_enabled "$FOLDER"; then

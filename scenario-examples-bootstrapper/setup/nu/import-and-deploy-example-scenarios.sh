@@ -24,6 +24,10 @@ function import_and_deploy_scenario() {
 
   ../../utils/nu/load-scenario-from-json-file.sh "$EXAMPLE_SCENARIO_NAME" "$EXAMPLE_SCENARIO_FILE"
   ../../utils/nu/deploy-scenario-and-wait-for-running-state.sh "$EXAMPLE_SCENARIO_NAME"
+
+  if ! should_deploy_scenario "$SCENARIO_EXAMPLE_DIR_PATH"; then
+    ../../utils/nu/cancel-scenario-and-wait-for-canceled-state.sh "$EXAMPLE_SCENARIO_NAME"
+  fi
 }
 
 echo "Starting to import and deploy example scenarios..."
