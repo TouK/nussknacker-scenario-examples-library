@@ -38,6 +38,7 @@ function customize_nu_configuration() {
 
 echo "Starting to customize Nu configuration..."
 
+mkdir -p "$CONFS_DIR"
 touch "$APP_CUSTOMIZATION_FILE_PATH"
 
 shopt -s nullglob
