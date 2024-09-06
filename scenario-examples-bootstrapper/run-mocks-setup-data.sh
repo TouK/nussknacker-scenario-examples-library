@@ -11,7 +11,9 @@ if /app/mocks/db/is-postgres-ready.sh && /app/mocks/http-service/is-wiremock-rea
   
   if are_embedded_examples_active; then 
     mkdir -p /scenario-examples
-    mv /tmp/scenario-examples/* /scenario-examples/
+    if [ "$(ls -A /tmp/scenario-examples)" ]; then
+      mv /tmp/scenario-examples/* /scenario-examples/
+    fi
   fi
 
   /app/mocks/configure.sh

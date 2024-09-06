@@ -82,6 +82,8 @@ function strip_extension() {
 }
 
 function is_scenario_enabled() {
+  set -e 
+  
   if [ "$#" -ne 1 ]; then
     red_echo "ERROR: One parameter required: 1) scenario folder path\n"
     return 1
@@ -90,12 +92,41 @@ function is_scenario_enabled() {
   SCENARIO_DIR=$1
   SCENARIO_NAME=$(basename "$SCENARIO_DIR")
 
-  IS_DISABLED=$(echo "${SCENARIO_NAME}_DISABLED" | tr '-' '_' | awk '{print toupper($0)}')
+  IS_DISABLED=$(format_env_name "${SCENARIO_NAME}_DISABLED")
   if [[ "${!IS_DISABLED,,}" == "true" ]]; then
     return 2
   fi
 
   return 0
+}
+
+function should_deploy_scenario() {
+  set -e 
+
+  if [ "$#" -ne 1 ]; then
+    red_echo "ERROR: One parameter required: 1) scenario folder path\n"
+    return 1
+  fi
+
+  SCENARIO_DIR=$1
+  SCENARIO_NAME=$(basename "$SCENARIO_DIR")
+
+  TO_DEPLOY=$(format_env_name "${SCENARIO_NAME}_DEPLOY")
+  if [[ "${!TO_DEPLOY,,}" == "false" ]]; then
+    return 2
+  fi
+
+  return 0
+}
+
+function format_env_name() {
+  if [ "$#" -ne 1 ]; then
+    red_echo "ERROR: One parameter required: 1) ENV name candidate string\n"
+    return 1
+  fi
+
+  NAME=$1
+  echo "${NAME}" | tr '-' '_' | awk '{print toupper($0)}'
 }
 
 function are_embedded_examples_active() {
@@ -113,3 +144,4 @@ function is_data_generation_active() {
     return 0
   fi
 }
+ 
