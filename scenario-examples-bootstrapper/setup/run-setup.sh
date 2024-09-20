@@ -14,6 +14,7 @@ for FOLDER in /scenario-examples/*; do
 
     ./schema-registry/setup-schemas.sh "$FOLDER"
     ./kafka/setup-topics.sh "$FOLDER"
+    ./flink/execute-flink-ddl-scripts.sh "$FOLDER"
     ./nu/customize-nu-configuration.sh "$FOLDER"
     ./nu/import-and-deploy-example-scenarios.sh "$FOLDER"
     
