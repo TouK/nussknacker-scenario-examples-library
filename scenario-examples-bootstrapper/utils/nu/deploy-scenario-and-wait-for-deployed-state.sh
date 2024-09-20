@@ -83,16 +83,17 @@ END_TIME=$((START_TIME + TIMEOUT_SECONDS))
 
 deploy_scenario "$SCENARIO_NAME"
 
+DEPLOYMENT_STATUS=""
 while true; do
   DEPLOYMENT_STATUS=$(check_deployment_status "$SCENARIO_NAME")
 
-  if [ "$DEPLOYMENT_STATUS" == "RUNNING" ]; then
+  if [[ "$DEPLOYMENT_STATUS" == "RUNNING" || "$DEPLOYMENT_STATUS" == "FINISHED" ]]; then
     break
   fi
 
   CURRENT_TIME=$(date +%s)
   if [ $CURRENT_TIME -gt $END_TIME ]; then
-    red_echo "ERROR: Timeout for waiting for the RUNNING state of $SCENARIO_NAME deployment reached!\n"
+    red_echo "ERROR: Timeout for waiting for the RUNNING (or FINISHED) state of $SCENARIO_NAME deployment reached!\n"
     exit 3
   fi
 
@@ -100,4 +101,4 @@ while true; do
   sleep $WAIT_INTERVAL
 done
 
-echo "Scenario $SCENARIO_NAME is RUNNING!"
+echo "Scenario $SCENARIO_NAME is $DEPLOYMENT_STATUS!"
