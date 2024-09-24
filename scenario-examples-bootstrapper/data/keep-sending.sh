@@ -13,6 +13,7 @@ if is_data_generation_active; then
     if is_scenario_enabled "$FOLDER"; then
       echo -e "Starting to send static and generated data for scenario from ${GREEN}$FOLDER${RESET} directory...\n\n"
   
+      ./flink/execute-flink-dml-scripts.sh "$FOLDER" 
       ./http/send-http-static-requests.sh "$FOLDER"
       ./kafka/send-kafka-static-messages.sh "$FOLDER"
       ./http/continuously-send-http-generated-requests.sh "$FOLDER"

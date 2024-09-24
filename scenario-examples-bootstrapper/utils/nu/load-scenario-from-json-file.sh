@@ -143,23 +143,44 @@ function save_scenario() {
   echo "Scenario $SCENARIO_NAME saved successfully."
 }
 
-META_DATA_TYPE=$(jq -r .metaData.additionalFields.metaDataType < "$SCENARIO_FILE_PATH")
-case "$META_DATA_TYPE" in
-  "StreamMetaData")
+SCENARIO_FILE_NAME="${SCENARIO_FILE_PATH%.*}"
+case "$SCENARIO_FILE_NAME" in
+  *streaming)
+    echo "Assuming that scenario in $SCENARIO_FILE_PATH is a Streaming scenario..."
     ENGINE="Flink"
     PROCESSING_MODE="Unbounded-Stream"
     ;;
-  "LiteStreamMetaData")
-    ENGINE="Lite Embedded"
-    PROCESSING_MODE="Unbounded-Stream"
-    ;;
-  "RequestResponseMetaData")
+  *request-response)
+    echo "Assuming that scenario in $SCENARIO_FILE_PATH is a Request-Response scenario..."
     ENGINE="Lite Embedded"
     PROCESSING_MODE="Request-Response"
     ;;
+  *batch)
+    echo "Assuming that scenario in $SCENARIO_FILE_PATH is a Batch scenario..."
+    ENGINE="Flink"
+    PROCESSING_MODE="Bounded-Stream"
+    ;;
   *)
-    red_echo "ERROR: Cannot import scenario with metadata type: $META_DATA_TYPE\n"
-    exit 4
+    echo "Cannot distinguish processing mode based on scenario filename. Using metadata..."
+    META_DATA_TYPE=$(jq -r .metaData.additionalFields.metaDataType < "$SCENARIO_FILE_PATH")
+    case "$META_DATA_TYPE" in
+      "StreamMetaData")
+        ENGINE="Flink"
+        PROCESSING_MODE="Unbounded-Stream"
+        ;;
+      "LiteStreamMetaData")
+        ENGINE="Lite Embedded"
+        PROCESSING_MODE="Unbounded-Stream"
+        ;;
+      "RequestResponseMetaData")
+        ENGINE="Lite Embedded"
+        PROCESSING_MODE="Request-Response"
+        ;;
+      *)
+        red_echo "ERROR: Cannot import scenario with metadata type: $META_DATA_TYPE\n"
+        exit 4
+        ;;
+    esac
     ;;
 esac
 
