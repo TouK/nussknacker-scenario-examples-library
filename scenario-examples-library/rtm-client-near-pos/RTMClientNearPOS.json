@@ -219,7 +219,7 @@
       "varName": "consents",
       "value": {
         "language": "spel",
-        "expression": "#UTIL.split(#clientData.consents, '_')"
+        "expression": "#clientData.consents != null ? #UTIL.split(#clientData.consents, '_') : {}"
       },
       "additionalFields": {
         "description": "We are transforming and then assigning consents to variable consents",
