@@ -30,7 +30,9 @@ function deploy_scenario() {
 
   local RESPONSE
   RESPONSE=$(curl -s -L -w "\n%{http_code}" -u admin:admin \
-    -X POST "http://${NU_DESIGNER_ADDRESS}/api/processManagement/deploy/$SCENARIO_NAME"
+    -X POST "http://${NU_DESIGNER_ADDRESS}/api/processManagement/deploy/$SCENARIO_NAME" \
+    -H "Content-Type: application/json" \
+    -d '{}'
   )
 
   local HTTP_STATUS
