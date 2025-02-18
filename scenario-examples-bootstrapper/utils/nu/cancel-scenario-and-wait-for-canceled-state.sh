@@ -32,7 +32,7 @@ function cancel_scenario() {
   RESPONSE=$(curl -s -L -w "\n%{http_code}" -u admin:admin \
     -X POST "http://${NU_DESIGNER_ADDRESS}/api/processManagement/cancel/$SCENARIO_NAME" \
     -H "Content-Type: application/json" \
-    -d '{}'
+    -d '{"comment":"Scenario is cancelled."}'
   )
 
   local HTTP_STATUS
