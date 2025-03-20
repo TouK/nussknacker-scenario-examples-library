@@ -6,6 +6,16 @@ source /app/utils/lib.sh
 
 rm -rf /app/healthy
 
+if [ ! -v NU_DESIGNER_USER ] || [ -z "$NU_DESIGNER_USER" ]; then
+  export NU_DESIGNER_USER="admin"
+  echo "NU_DESIGNER_USER not set or empty, using default: admin"
+fi
+
+if [ ! -v NU_DESIGNER_PASSWORD ] || [ -z "$NU_DESIGNER_PASSWORD" ]; then
+  export NU_DESIGNER_PASSWORD="admin"
+  echo "NU_DESIGNER_PASSWORD not set or empty, using default: admin"
+fi
+
 if /app/mocks/db/is-postgres-ready.sh && /app/mocks/http-service/is-wiremock-ready.sh; then
   green_echo "------ Nu scenarios library is being prepared... ---------\n"
   

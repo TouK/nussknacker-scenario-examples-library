@@ -14,6 +14,16 @@ if ! [ -v NU_DESIGNER_ADDRESS ] || [ -z "$NU_DESIGNER_ADDRESS" ]; then
   exit 2
 fi
 
+if ! [ -v NU_DESIGNER_USER ] || [ -z "$NU_DESIGNER_USER" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_USER not set or empty\n"
+  exit 3
+fi
+
+if ! [ -v NU_DESIGNER_PASSWORD ] || [ -z "$NU_DESIGNER_PASSWORD" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_PASSWORD not set or empty\n"
+  exit 4
+fi
+
 SCENARIO_NAME=$1
 TIMEOUT_SECONDS=${2:-60}
 WAIT_INTERVAL=5
@@ -29,7 +39,7 @@ function cancel_scenario() {
   local SCENARIO_NAME=$1
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u admin:admin \
+  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
     -X POST "http://${NU_DESIGNER_ADDRESS}/api/processManagement/cancel/$SCENARIO_NAME" \
     -H "Content-Type: application/json" \
     -d '{"comment":"Scenario is cancelled."}'
@@ -59,7 +69,7 @@ function check_cancellation_status() {
   local SCENARIO_NAME=$1
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u admin:admin \
+  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
     -X GET "http://${NU_DESIGNER_ADDRESS}/api/processes/$SCENARIO_NAME/status"
   )
 

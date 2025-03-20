@@ -14,13 +14,23 @@ if ! [ -v NU_DESIGNER_ADDRESS ] || [ -z "$NU_DESIGNER_ADDRESS" ]; then
   exit 2
 fi
 
+if ! [ -v NU_DESIGNER_USER ] || [ -z "$NU_DESIGNER_USER" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_USER not set or empty\n"
+  exit 3
+fi
+
+if ! [ -v NU_DESIGNER_PASSWORD ] || [ -z "$NU_DESIGNER_PASSWORD" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_PASSWORD not set or empty\n"
+  exit 4
+fi
+
 SCENARIO_NAME=$1
 SCENARIO_FILE_PATH=$2
 CATEGORY=${3:-"Default"}
 
 if [ ! -f "$SCENARIO_FILE_PATH" ]; then
   red_echo "ERROR: Cannot find file $SCENARIO_FILE_PATH with scenario\n"
-  exit 3
+  exit 5
 fi
 
 function create_empty_scenario() {
@@ -45,7 +55,7 @@ function create_empty_scenario() {
   }"
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u admin:admin \
+  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
     -X POST "http://${NU_DESIGNER_ADDRESS}/api/processes" \
     -H "Content-Type: application/json" -d "$REQUEST_BODY"
   )
@@ -86,7 +96,7 @@ function import_scenario_from_file() {
   local SCENARIO_FILE=$2
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u admin:admin \
+  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
     -X POST "http://${NU_DESIGNER_ADDRESS}/api/processes/import/$SCENARIO_NAME" \
     -F "process=@$SCENARIO_FILE"
   )
@@ -125,7 +135,7 @@ function save_scenario() {
   }"
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u admin:admin \
+  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
     -X PUT "http://${NU_DESIGNER_ADDRESS}/api/processes/$SCENARIO_NAME" \
     -H "Content-Type: application/json" -d "$REQUEST_BODY"
   )
