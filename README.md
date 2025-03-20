@@ -71,6 +71,8 @@ volumes:
 
 - `NU_DESIGNER_ADDRESS` - it contains the address (with port) of the Designer API. It's used to import and deploy scenarios and for Nu 
   configuration reloading. You should always configure one. 
+- `NU_DESIGNER_USER` - username used to authenticate with the Designer API when importing/deploying scenarios and reloading configuration
+- `NU_DESIGNER_PASSWORD` - password used to authenticate with the Designer API when importing/deploying scenarios and reloading configuration
 - `NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS` - it contains the address (with port) of the server which exposes Request-Response 
   scenarios. You will need it when you want to run Request-Response scenario example using the library with requests generator.
 - `KAFKA_ADDRESS` - it contains the address (With port) of a Kafka service. You will need it when you want to run streaming examples 

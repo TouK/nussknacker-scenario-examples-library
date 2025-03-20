@@ -9,11 +9,21 @@ if ! [ -v NU_DESIGNER_ADDRESS ] || [ -z "$NU_DESIGNER_ADDRESS" ]; then
   exit 1
 fi
 
+if ! [ -v NU_DESIGNER_USER ] || [ -z "$NU_DESIGNER_USER" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_USER not set or empty\n"
+  exit 2
+fi
+
+if ! [ -v NU_DESIGNER_PASSWORD ] || [ -z "$NU_DESIGNER_PASSWORD" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_PASSWORD not set or empty\n"
+  exit 3
+fi
+
 function reload_configuration() {
   set -e
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u admin:admin \
+  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
     -X POST "http://${NU_DESIGNER_ADDRESS}/api/app/processingtype/reload"
   )
 
