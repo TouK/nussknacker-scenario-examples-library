@@ -17,8 +17,8 @@ fi
 TOPIC_NAME=$1
 MESSAGES=$2
 
-if kaf --brokers="$KAFKA_ADDRESS" topics ls | awk '{print $1}' | grep "^$TOPIC_NAME$" > /dev/null 2>&1; then
-  echo "$MESSAGES" | kaf --brokers="$KAFKA_ADDRESS" produce "$TOPIC_NAME" > /dev/null
+if kaf topics ls | awk '{print $1}' | grep "^$TOPIC_NAME$" > /dev/null 2>&1; then
+  echo "$MESSAGES" | kaf produce "$TOPIC_NAME" > /dev/null
 else
   red_echo "ERROR: Topic name '$TOPIC_NAME' not found\n"
   exit 3

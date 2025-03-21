@@ -16,8 +16,8 @@ fi
 
 TOPIC_NAME=$1
 
-if kaf --brokers="$KAFKA_ADDRESS" topics ls | awk '{print $1}' | grep "^$TOPIC_NAME$" > /dev/null 2>&1; then
-  kaf --brokers="$KAFKA_ADDRESS" consume "$TOPIC_NAME" --offset oldest --output raw
+if kaf topics ls | awk '{print $1}' | grep "^$TOPIC_NAME$" > /dev/null 2>&1; then
+  kaf consume "$TOPIC_NAME" --offset oldest --output raw
 else
   red_echo "ERROR: Topic name '$TOPIC_NAME' not found\n"
   exit 3

@@ -1,12 +1,17 @@
 #!/bin/bash -e
 
 RED='\033[31m'
+ORANGE='\033[33m'
 GREEN='\033[32m'
 MAGENTA='\033[35m'
 RESET='\033[0m'
 
 function red_echo() {
   echo -e "${RED}$1${RESET}"
+}
+
+function orange_echo() {
+  echo -e "${ORANGER}$1${RESET}"
 }
 
 function green_echo() {

@@ -75,10 +75,13 @@ volumes:
 - `NU_DESIGNER_PASSWORD` - password used to authenticate with the Designer API when importing/deploying scenarios and reloading configuration
 - `NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS` - it contains the address (with port) of the server which exposes Request-Response 
   scenarios. You will need it when you want to run Request-Response scenario example using the library with requests generator.
-- `KAFKA_ADDRESS` - it contains the address (With port) of a Kafka service. You will need it when you want to run streaming examples 
+- `KAFKA_AUTH_MODE` - authentication mode used when connecting to Kafka. Supported values are: `NO_AUTH` (default) - no authentication (requires KAFKA_ADDRESS to be set), `FILE_DEFINED_AUTH` - use custom Kafka authentication configuration from ~/.kafka/config file (see https://github.com/birdayz/kaf/tree/master/examples)
+- `KAFKA_ADDRESS` - (only required when `KAFKA_AUTH_MODE: NO_AUTH` is set) it contains the address (with port) of a Kafka service. You will need it when you want to run streaming examples.
   with Kafka sources. It's used to create topics and by generator to generate example messages.
 - `SCHEMA_REGISTRY_ADDRESS` - it contains the address (with port) of a Schema Registry service. You will need it when you want to run 
   streaming examples with Kafka sources. It's used to create schemas for Kafka topics.
+- `SCHEMA_REGISTRY_USER` - username used to authenticate with the Schema Registry API when creating schemas for Kafka topics
+- `SCHEMA_REGISTRY_PASSWORD` - password used to authenticate with the Schema Registry API when creating schemas for Kafka topics
 - `FLINK_SQL_GATEWAY_ADDRESS` - it contains the address (with port) of the [Flink SQL Gateway](https://nightlies.apache.org/flink/flink-docs-master/docs/dev/table/sql-gateway/overview/). You will need it when you want to run batch examples. It's used to create Flink tables and insert data.
 
 #### Used by the `designer` service 

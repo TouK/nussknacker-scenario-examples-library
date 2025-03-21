@@ -16,6 +16,6 @@ fi
 
 TOPIC_NAME=$1
 
-kaf --brokers="$KAFKA_ADDRESS" topic delete "$TOPIC_NAME" > /dev/null
+kaf topic delete "$TOPIC_NAME" > /dev/null
 sleep 0.5
 ./create-topic-idempotently.sh "$TOPIC_NAME"
