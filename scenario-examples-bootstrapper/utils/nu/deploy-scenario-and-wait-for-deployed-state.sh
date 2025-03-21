@@ -9,8 +9,8 @@ if [ "$#" -lt 1 ]; then
   exit 1
 fi
 
-if ! [ -v NU_DESIGNER_ADDRESS ] || [ -z "$NU_DESIGNER_ADDRESS" ]; then
-  red_echo "ERROR: required variable NU_DESIGNER_ADDRESS not set or empty\n"
+if ! [ -v NU_DESIGNER_URL ] || [ -z "$NU_DESIGNER_URL" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_URL not set or empty\n"
   exit 2
 fi
 
@@ -39,8 +39,8 @@ function deploy_scenario() {
   local SCENARIO_NAME=$1
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
-    -X POST "http://${NU_DESIGNER_ADDRESS}/api/processManagement/deploy/$SCENARIO_NAME" \
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
+    -X POST "${NU_DESIGNER_URL}/api/processManagement/deploy/$SCENARIO_NAME" \
     -H "Content-Type: application/json" \
     -d '{"comment":"Scenario is deployed."}'
   )
@@ -69,8 +69,8 @@ function check_deployment_status() {
   local SCENARIO_NAME=$1
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
-    -X GET "http://${NU_DESIGNER_ADDRESS}/api/processes/$SCENARIO_NAME/status"
+  RESPONSE=$(-k -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
+    -X GET "${NU_DESIGNER_URL}/api/processes/$SCENARIO_NAME/status"
   )
 
   local HTTP_STATUS

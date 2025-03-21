@@ -9,8 +9,8 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
-if ! [ -v FLINK_SQL_GATEWAY_ADDRESS ] || [ -z "$FLINK_SQL_GATEWAY_ADDRESS" ]; then
-  red_echo "ERROR: required variable FLINK_SQL_GATEWAY_ADDRESS not set or empty\n"
+if ! [ -v FLINK_SQL_GATEWAY_URL ] || [ -z "$FLINK_SQL_GATEWAY_URL" ]; then
+  red_echo "ERROR: required variable FLINK_SQL_GATEWAY_URL not set or empty\n"
   exit 2
 fi
 
@@ -37,15 +37,15 @@ function apiCall() {
 
   local RESPONSE
   if [[ -n "$REQUEST_BODY" ]]; then
-    RESPONSE=$(curl -s -L -w "\n%{http_code}" \
-      -X "$METHOD" "http://${FLINK_SQL_GATEWAY_ADDRESS}${ENDPOINT}" \
+    RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+      -X "$METHOD" "${FLINK_SQL_GATEWAY_URL}${ENDPOINT}" \
       -H "Accept: application/json" \
       -H "Content-Type: application/json" \
       -d "$REQUEST_BODY"
     )
   else
-    RESPONSE=$(curl -s -L -w "\n%{http_code}" \
-      -X "$METHOD" "http://${FLINK_SQL_GATEWAY_ADDRESS}${ENDPOINT}" \
+    RESPONSE=$(-k -s -L -w "\n%{http_code}" \
+      -X "$METHOD" "${FLINK_SQL_GATEWAY_URL}${ENDPOINT}" \
       -H "Accept: application/json"
     )
   fi

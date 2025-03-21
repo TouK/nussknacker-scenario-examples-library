@@ -9,16 +9,11 @@ if [ "$#" -ne 1 ]; then
   exit 1
 fi
 
-if ! [ -v KAFKA_ADDRESS ] || [ -z "$KAFKA_ADDRESS" ]; then
-  red_echo "ERROR: required variable KAFKA_ADDRESS not set or empty\n"
-  exit 2
-fi
-
 TOPIC_NAME=$1
 
-if kaf topics ls | awk '{print $1}' | grep "^$TOPIC_NAME$" > /dev/null 2>&1; then
-  kaf consume "$TOPIC_NAME" --offset oldest --output raw
+if kaf --config /configs/kaf topics ls | awk '{print $1}' | grep "^$TOPIC_NAME$" > /dev/null 2>&1; then
+  kaf --config /configs/kaf consume "$TOPIC_NAME" --offset oldest --output raw
 else
   red_echo "ERROR: Topic name '$TOPIC_NAME' not found\n"
-  exit 3
+  exit 2
 fi

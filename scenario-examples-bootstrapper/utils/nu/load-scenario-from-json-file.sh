@@ -9,8 +9,8 @@ if [ "$#" -lt 2 ]; then
   exit 1
 fi
 
-if ! [ -v NU_DESIGNER_ADDRESS ] || [ -z "$NU_DESIGNER_ADDRESS" ]; then
-  red_echo "ERROR: required variable NU_DESIGNER_ADDRESS not set or empty\n"
+if ! [ -v NU_DESIGNER_URL ] || [ -z "$NU_DESIGNER_URL" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_URL not set or empty\n"
   exit 2
 fi
 
@@ -55,8 +55,8 @@ function create_empty_scenario() {
   }"
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
-    -X POST "http://${NU_DESIGNER_ADDRESS}/api/processes" \
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
+    -X POST "${NU_DESIGNER_URL}/api/processes" \
     -H "Content-Type: application/json" -d "$REQUEST_BODY"
   )
 
@@ -96,8 +96,8 @@ function import_scenario_from_file() {
   local SCENARIO_FILE=$2
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
-    -X POST "http://${NU_DESIGNER_ADDRESS}/api/processes/import/$SCENARIO_NAME" \
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
+    -X POST "${NU_DESIGNER_URL}/api/processes/import/$SCENARIO_NAME" \
     -F "process=@$SCENARIO_FILE"
   )
 
@@ -135,8 +135,8 @@ function save_scenario() {
   }"
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
-    -X PUT "http://${NU_DESIGNER_ADDRESS}/api/processes/$SCENARIO_NAME" \
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
+    -X PUT "${NU_DESIGNER_URL}/api/processes/$SCENARIO_NAME" \
     -H "Content-Type: application/json" -d "$REQUEST_BODY"
   )
 

@@ -6,6 +6,8 @@ source /app/utils/lib.sh
 
 rm -rf /app/healthy
 
+/app/utils/kafka/configure-kafka-client.sh
+
 if [ ! -v NU_DESIGNER_USER ] || [ -z "$NU_DESIGNER_USER" ]; then
   export NU_DESIGNER_USER="admin"
   echo "NU_DESIGNER_USER not set or empty, using default: admin"

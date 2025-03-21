@@ -2,6 +2,8 @@
 
 cd "$(dirname "$0")"
 
+# todo: address -> URL (backwards compatibility)
+
 source ../lib.sh
 
 if ! [ -v KAFKA_AUTH_MODE ]; then
@@ -15,8 +17,8 @@ function setup_no_auth_kafka_client() {
     exit 21
   fi
 
-  mkdir -p ~/.kafka
-  cat <<EOF > ~/.kafka/config
+  mkdir -p /configs
+  cat <<EOF > /configs/kaf
 current-cluster: local
 clusteroverride: ""
 clusters:
@@ -37,14 +39,14 @@ function setup_file_defined_auth_kafka_client() {
     orange_echo "WARN: when FILE_DEFINED_AUTH is used, KAFKA_ADDRESS is ignored\n"
   fi
 
-  if [ ! -f ~/.kafka/config ]; then
-    red_echo "ERROR: ~/.kafka/config does not exist. When you use FILE_DEFINED_AUTH, you must provide kaf tool configuration (see https://github.com/birdayz/kaf/tree/master/examples)"
+  if [ ! -f /configs/kaf ]; then
+    red_echo "ERROR: /configs/kaf does not exist. When you use FILE_DEFINED_AUTH, you must provide kaf tool configuration (see https://github.com/birdayz/kaf/tree/master/examples)"
     exit 32
   fi  
 
-  if ! kaf topics ls > /dev/null 2>&1; then
+  if ! kaf --config /configs/kaf topics ls > /dev/null 2>&1; then
     red_echo "ERROR: Cannot connect to Kafka using provided configuration:"
-    kaf topics ls
+    kaf --config /configs/kaf topics ls
     exit 33
   fi
 }
