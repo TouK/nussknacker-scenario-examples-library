@@ -71,8 +71,12 @@ volumes:
 
 - `NU_DESIGNER_URL` - it contains URL of the Designer API. It's used to import and deploy scenarios and for Nu 
   configuration reloading. You should always configure one. 
+- `NU_DESIGNER_AUTH_MODE` - authentication mode used when connecting to Designer API. Supported values are: `BASIC_AUTH` (default) - basic authentication using username/password (requires NU_DESIGNER_USER and NU_DESIGNER_PASSWORD to be set), `AUTH0` - authentication using Auth0 tokens (requires NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL, NU_DESIGNER_OAUTH_CLIENT_ID and NU_DESIGNER_OAUTH_CLIENT_SECRET to be set)
 - `NU_DESIGNER_USER` - username used to authenticate with the Designer API when importing/deploying scenarios and reloading configuration
 - `NU_DESIGNER_PASSWORD` - password used to authenticate with the Designer API when importing/deploying scenarios and reloading configuration
+- `NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL` - URL of the Auth0 token endpoint used to obtain M2M (Machine-to-Machine) access tokens for Designer API authentication
+- `NU_DESIGNER_OAUTH_CLIENT_ID` - Auth0 client ID used for obtaining M2M access tokens
+- `NU_DESIGNER_OAUTH_CLIENT_SECRET` - Auth0 client secret used for obtaining M2M access tokens
 - `NU_REQUEST_RESPONSE_OPEN_API_SERVICE_URL` - it contains the URL of the server which exposes Request-Response 
   scenarios. You will need it when you want to run Request-Response scenario example using the library with requests generator.
 - `KAFKA_AUTH_MODE` - authentication mode used when connecting to Kafka. Supported values are: `NO_AUTH` (default) - no authentication (requires KAFKA_ADDRESS to be set), `FILE_DEFINED_AUTH` - use custom Kafka authentication configuration from the `/configs/kaf` file (see https://github.com/birdayz/kaf/tree/master/examples)

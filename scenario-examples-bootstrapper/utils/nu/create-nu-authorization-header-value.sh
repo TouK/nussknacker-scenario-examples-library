@@ -1,0 +1,58 @@
+#!/bin/bash -e
+
+cd "$(dirname "$0")"
+
+source ../lib.sh
+
+if ! [ -v NU_DESIGNER_AUTH_MODE ] || [ -z "$NU_DESIGNER_AUTH_MODE" ]; then
+  NU_DESIGNER_AUTH_MODE="BASIC_AUTH"
+fi
+
+case "$NU_DESIGNER_AUTH_MODE" in
+  "BASIC_AUTH")
+    if [ ! -v NU_DESIGNER_USER ] || [ -z "$NU_DESIGNER_USER" ]; then
+      export NU_DESIGNER_USER="admin"
+      echo "NU_DESIGNER_USER not set or empty, using default: admin"
+    fi
+
+    if [ ! -v NU_DESIGNER_PASSWORD ] || [ -z "$NU_DESIGNER_PASSWORD" ]; then
+      export NU_DESIGNER_PASSWORD="admin"
+      echo "NU_DESIGNER_PASSWORD not set or empty, using default: admin"
+    fi
+
+    export NU_DESIGNER_AUTH_HEADER="-u $NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD"
+    ;;
+  "AUTH0") 
+    if ! [ -v NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL ] || [ -z "$NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL" ]; then
+      red_echo "ERROR: required variable NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL not set or empty\n"
+      exit 1
+    fi
+    if ! [ -v NU_DESIGNER_OAUTH_CLIENT_ID ] || [ -z "$NU_DESIGNER_OAUTH_CLIENT_ID" ]; then
+      red_echo "ERROR: required variable NU_DESIGNER_OAUTH_CLIENT_ID not set or empty\n"
+      exit 2
+    fi
+    if ! [ -v NU_DESIGNER_OAUTH_CLIENT_SECRET ] || [ -z "$NU_DESIGNER_OAUTH_CLIENT_SECRET" ]; then
+      red_echo "ERROR: required variable NU_DESIGNER_OAUTH_CLIENT_SECRET not set or empty\n"
+      exit 3
+    fi
+
+    ACCESS_TOKEN=$(curl --request POST \
+      --url "$NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL" \
+      --header 'content-type: application/x-www-form-urlencoded' \
+      --data grant_type=client_credentials \
+      --data client_id="$NU_DESIGNER_OAUTH_CLIENT_ID" \
+      --data client_secret="$NU_DESIGNER_OAUTH_CLIENT_SECRET" \
+      --data audience="https://cloud.nussknacker.io" | jq -r .access_token)
+    
+    if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" == "null" ]; then
+      red_echo "ERROR: Failed to fetch OAuth2 M2M access token\n"
+      exit 4
+    fi
+
+    export NU_DESIGNER_AUTH_HEADER="Bearer $ACCESS_TOKEN"
+    ;;
+  *)
+    red_echo "ERROR: Unsupported NU_DESIGNER_AUTH_MODE: $NU_DESIGNER_AUTH_MODE\n"
+    exit 5
+    ;;
+esac
