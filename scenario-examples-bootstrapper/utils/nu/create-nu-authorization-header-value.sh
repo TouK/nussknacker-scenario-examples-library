@@ -37,7 +37,7 @@ case "$NU_DESIGNER_AUTH_MODE" in
     fi
 
     ACCESS_TOKEN=$(curl --request POST \
-      --url "$NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL" \
+      --url "$NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL/api/oauth/token" \
       --header 'content-type: application/x-www-form-urlencoded' \
       --data grant_type=client_credentials \
       --data client_id="$NU_DESIGNER_OAUTH_CLIENT_ID" \
