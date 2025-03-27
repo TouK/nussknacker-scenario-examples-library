@@ -72,8 +72,8 @@ volumes:
 - `NU_DESIGNER_URL` - it contains URL of the Designer API. It's used to import and deploy scenarios and for Nu 
   configuration reloading. You should always configure one. 
 - `NU_DESIGNER_AUTH_MODE` - authentication mode used when connecting to Designer API. Supported values are: `BASIC_AUTH` (default) - basic authentication using username/password (requires NU_DESIGNER_USER and NU_DESIGNER_PASSWORD to be set), `AUTH0` - authentication using Auth0 tokens (requires NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL, NU_DESIGNER_OAUTH_CLIENT_ID and NU_DESIGNER_OAUTH_CLIENT_SECRET to be set)
-- `NU_DESIGNER_USER` - username used to authenticate with the Designer API when importing/deploying scenarios and reloading configuration
-- `NU_DESIGNER_PASSWORD` - password used to authenticate with the Designer API when importing/deploying scenarios and reloading configuration
+- `NU_DESIGNER_USER` - username used to authenticate with the Designer API when importing/deploying scenarios and reloading configuration. Defaults to "admin"
+- `NU_DESIGNER_PASSWORD` - password used to authenticate with the Designer API when importing/deploying scenarios and reloading configuration. Defaults to "admin"
 - `NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL` - URL of the Auth0 token endpoint used to obtain M2M (Machine-to-Machine) access tokens for Designer API authentication
 - `NU_DESIGNER_OAUTH_CLIENT_ID` - Auth0 client ID used for obtaining M2M access tokens
 - `NU_DESIGNER_OAUTH_CLIENT_SECRET` - Auth0 client secret used for obtaining M2M access tokens
@@ -84,10 +84,9 @@ volumes:
   with Kafka sources. It's used to create topics and by generator to generate example messages.
 - `SCHEMA_REGISTRY_URL` - it contains the URL of a Schema Registry service. You will need it when you want to run 
   streaming examples with Kafka sources. It's used to create schemas for Kafka topics.
-- `SCHEMA_REGISTRY_USER` - username used to authenticate with the Schema Registry API when creating schemas for Kafka topics
-- `SCHEMA_REGISTRY_PASSWORD` - password used to authenticate with the Schema Registry API when creating schemas for Kafka topics
+- `SCHEMA_REGISTRY_USER` - username used to authenticate with the Schema Registry API when creating schemas for Kafka topics. Defaults to "admin"
+- `SCHEMA_REGISTRY_PASSWORD` - password used to authenticate with the Schema Registry API when creating schemas for Kafka topics. Defaults to "admin"
 - `FLINK_SQL_GATEWAY_URL` - it contains the URL of the [Flink SQL Gateway](https://nightlies.apache.org/flink/flink-docs-master/docs/dev/table/sql-gateway/overview/). You will need it when you want to run batch examples. It's used to create Flink tables and insert data.
-- `STOP_WHEN_NO_GENERATOR_OR_MOCK_ENABLED` - when set to `true`, the library service will stop if no data generators or mocks are enabled. This is useful for scenarios where you want the service to terminate after setup if there's no need for continuous data generation or mock services. Default is `false`.
 
 #### Used by the `designer` service 
 
@@ -130,6 +129,11 @@ You can disable only data generation for all the examples from the library by se
 You can disable scenario deployment (in fact, the scenario will be deployed but then it will be canceled) for a specific
 example by setting e.g. `LOAN_REQUEST_DEPLOY: false` - this ENV ensures that the `loan-request' scenario example is not 
 active when the data data generation is started.
+
+#### Keep the service alive
+
+The library service can be configured to automatically stop when no data generators or mock services are actively being used. This behavior is controlled by the `STOP_WHEN_NO_GENERATOR_OR_MOCK_ENABLED` environment variable. When set to `true`, the service will terminate after completing the initial setup if there are no active generators or mocks, which is useful for scenarios that only require the setup phase. By default, this option is set to `false`, meaning the service will continue running regardless of generator or mock usage.
+
 
 ### Additional outside requirements
 

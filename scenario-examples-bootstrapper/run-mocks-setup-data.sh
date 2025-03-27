@@ -6,8 +6,7 @@ source /app/utils/lib.sh
 
 rm -rf /app/healthy
 
-/app/utils/kafka/configure-kafka-client.sh
-/app/utils/nu/create-nu-authorization-header-value.sh
+/app/utils/configure-clients.sh
 
 if /app/mocks/db/is-postgres-ready.sh && /app/mocks/http-service/is-wiremock-ready.sh; then
   green_echo "------ Nu scenarios library is being prepared... ---------\n"

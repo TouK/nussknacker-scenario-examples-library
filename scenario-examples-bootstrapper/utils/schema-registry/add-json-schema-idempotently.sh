@@ -14,14 +14,9 @@ if ! [ -v SCHEMA_REGISTRY_URL ] || [ -z "$SCHEMA_REGISTRY_URL" ]; then
   exit 2
 fi
 
-if ! [ -v SCHEMA_REGISTRY_USER ] || [ -z "$SCHEMA_REGISTRY_USER" ]; then
-  red_echo "ERROR: required variable SCHEMA_REGISTRY_USER not set or empty\n"
+if ! [ -v SCHEMA_REGISTRY_AUTH_HEADER ] || [ -z "$SCHEMA_REGISTRY_AUTH_HEADER" ]; then
+  red_echo "ERROR: required variable SCHEMA_REGISTRY_AUTH_HEADER not set or empty\n"
   exit 3
-fi
-
-if ! [ -v SCHEMA_REGISTRY_PASSWORD ] || [ -z "$SCHEMA_REGISTRY_PASSWORD" ]; then
-  red_echo "ERROR: required variable SCHEMA_REGISTRY_PASSWORD not set or empty\n"
-  exit 4
 fi
 
 SCHEMA_NAME=$1
@@ -35,7 +30,7 @@ REQUEST_BODY="{
   \"references\": []
 }"
 
-RESPONSE=$(curl -k -s -L -w "\n%{http_code}" -u "$SCHEMA_REGISTRY_USER:$SCHEMA_REGISTRY_PASSWORD" \
+RESPONSE=$(curl -k -s -L -w "\n%{http_code}" -u "$SCHEMA_REGISTRY_AUTH_HEADER" \
   -X POST "${SCHEMA_REGISTRY_URL}/subjects/${SCHEMA_NAME}/versions" \
   -H "Content-Type: application/vnd.schemaregistry.v1+json" -d "$REQUEST_BODY"
 )
@@ -46,5 +41,5 @@ if [[ "$HTTP_STATUS" != 200 ]] ; then
   RESPONSE_BODY
   RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
   red_echo "ERROR: Cannot create schema $SCHEMA_NAME.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
-  exit 3
+  exit 4
 fi
