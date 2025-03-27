@@ -19,7 +19,8 @@ function reload_configuration() {
   set -e
 
   local RESPONSE
-  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_AUTH_HEADER" \
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
     -X POST "${NU_DESIGNER_URL}/api/app/processingtype/reload"
   )
 

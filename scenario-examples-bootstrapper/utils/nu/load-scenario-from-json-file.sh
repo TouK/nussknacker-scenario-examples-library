@@ -51,7 +51,8 @@ function create_empty_scenario() {
   }"
 
   local RESPONSE
-  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_AUTH_HEADER" \
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
     -X POST "${NU_DESIGNER_URL}/api/processes" \
     -H "Content-Type: application/json" -d "$REQUEST_BODY"
   )
@@ -92,7 +93,8 @@ function import_scenario_from_file() {
   local SCENARIO_FILE=$2
 
   local RESPONSE
-  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_AUTH_HEADER" \
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
     -X POST "${NU_DESIGNER_URL}/api/processes/import/$SCENARIO_NAME" \
     -F "process=@$SCENARIO_FILE"
   )
@@ -131,7 +133,8 @@ function save_scenario() {
   }"
 
   local RESPONSE
-  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_AUTH_HEADER" \
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
     -X PUT "${NU_DESIGNER_URL}/api/processes/$SCENARIO_NAME" \
     -H "Content-Type: application/json" -d "$REQUEST_BODY"
   )

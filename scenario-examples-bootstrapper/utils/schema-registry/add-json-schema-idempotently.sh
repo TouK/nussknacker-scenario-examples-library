@@ -31,7 +31,8 @@ REQUEST_BODY="{
   \"references\": []
 }"
 
-RESPONSE=$(curl -k -s -L -w "\n%{http_code}" -u "$SCHEMA_REGISTRY_AUTH_HEADER" \
+RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+  -H "Authorization: $SCHEMA_REGISTRY_AUTH_HEADER" \
   -X POST "${SCHEMA_REGISTRY_URL}/subjects/${SCHEMA_NAME}/versions" \
   -H "Content-Type: application/vnd.schemaregistry.v1+json" -d "$REQUEST_BODY"
 )

@@ -28,8 +28,9 @@ case "$NU_DESIGNER_AUTH_MODE" in
       NU_DESIGNER_PASSWORD="admin"
       echo "NU_DESIGNER_PASSWORD not set or empty, using default: admin"
     fi
-
-    echo "NU_DESIGNER_AUTH_HEADER=\"$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD\"" >> $NU_DESIGNER_CONFIG_FILE
+    
+    BASIC_AUTH=$(echo -n "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" | base64)
+    echo "NU_DESIGNER_AUTH_HEADER=\"Basic $BASIC_AUTH\"" >> $NU_DESIGNER_CONFIG_FILE
     ;;
   "AUTH0") 
     if ! [ -v NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL ] || [ -z "$NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL" ]; then
