@@ -2,13 +2,11 @@
 
 cd "$(dirname "$0")"
 
-# todo: address -> URL (backwards compatibility)
-
 source ../lib.sh
 
 if ! [ -v KAFKA_AUTH_MODE ]; then
   echo "KAFKA_AUTH_MODE not set, using default value 'NO_AUTH'"
-  export KAFKA_AUTH_MODE="NO_AUTH"
+  KAFKA_AUTH_MODE="NO_AUTH"
 fi
 
 function setup_no_auth_kafka_client() {

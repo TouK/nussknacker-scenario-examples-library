@@ -3,6 +3,7 @@
 cd "$(dirname "$0")"
 
 source ../lib.sh
+source /configs/schema-registry
 
 if [ "$#" -ne 2 ]; then
   red_echo "ERROR: Two parameters required: 1) schema name, 2) schema file path\n"

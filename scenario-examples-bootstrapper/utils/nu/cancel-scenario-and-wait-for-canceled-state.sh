@@ -3,6 +3,7 @@
 cd "$(dirname "$0")"
 
 source ../lib.sh
+source /configs/nu-designer
 
 if [ "$#" -lt 1 ]; then
   red_echo "ERROR: One parameter required: 1) scenario name\n"
