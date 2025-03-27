@@ -10,7 +10,7 @@ touch $NU_DESIGNER_CONFIG_FILE
 
 if [ -v NU_DESIGNER_ADDRESS ] && ! [ -v NU_DESIGNER_URL ]; then
   orange_echo "WARN: Nu Designer address is provided but URL is not set, setting it to ${NU_DESIGNER_ADDRESS}"
-  echo "NU_DESIGNER_URL=http://${NU_DESIGNER_ADDRESS}" >> $NU_DESIGNER_CONFIG_FILE
+  echo "NU_DESIGNER_URL=\"http://${NU_DESIGNER_ADDRESS}\"" >> $NU_DESIGNER_CONFIG_FILE
 fi
 
 if ! [ -v NU_DESIGNER_AUTH_MODE ] || [ -z "$NU_DESIGNER_AUTH_MODE" ]; then
@@ -29,7 +29,7 @@ case "$NU_DESIGNER_AUTH_MODE" in
       echo "NU_DESIGNER_PASSWORD not set or empty, using default: admin"
     fi
 
-    echo "NU_DESIGNER_AUTH_HEADER=$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" >> $NU_DESIGNER_CONFIG_FILE
+    echo "NU_DESIGNER_AUTH_HEADER=\"$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD\"" >> $NU_DESIGNER_CONFIG_FILE
     ;;
   "AUTH0") 
     if ! [ -v NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL ] || [ -z "$NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL" ]; then
@@ -58,7 +58,7 @@ case "$NU_DESIGNER_AUTH_MODE" in
       exit 4
     fi
 
-    echo "NU_DESIGNER_AUTH_HEADER=Bearer $ACCESS_TOKEN" >> $NU_DESIGNER_CONFIG_FILE
+    echo "NU_DESIGNER_AUTH_HEADER=\"Bearer $ACCESS_TOKEN\"" >> $NU_DESIGNER_CONFIG_FILE
     ;;
   *)
     red_echo "ERROR: Unsupported NU_DESIGNER_AUTH_MODE: $NU_DESIGNER_AUTH_MODE\n"
