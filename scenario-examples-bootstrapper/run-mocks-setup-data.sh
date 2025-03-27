@@ -27,6 +27,16 @@ if /app/mocks/db/is-postgres-ready.sh && /app/mocks/http-service/is-wiremock-rea
   
   touch /app/healthy
   
+  export GENERATORS_USED=false
+  export MOCKS_USED=false
+
+  if [ "$STOP_WHEN_NO_GENERATOR_OR_MOCK_ENABLED" = "true" ]; then 
+    if [ "$GENERATORS_USED" = "false" ] && [ "$MOCKS_USED" = "false" ]; then
+      green_echo "No generators or mocks used, stopping the library service..."
+      exit 0
+    fi
+  fi
+
   # loop forever (you can use manually called utils scripts now)
   tail -f /dev/null
 else

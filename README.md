@@ -87,6 +87,7 @@ volumes:
 - `SCHEMA_REGISTRY_USER` - username used to authenticate with the Schema Registry API when creating schemas for Kafka topics
 - `SCHEMA_REGISTRY_PASSWORD` - password used to authenticate with the Schema Registry API when creating schemas for Kafka topics
 - `FLINK_SQL_GATEWAY_URL` - it contains the URL of the [Flink SQL Gateway](https://nightlies.apache.org/flink/flink-docs-master/docs/dev/table/sql-gateway/overview/). You will need it when you want to run batch examples. It's used to create Flink tables and insert data.
+- `STOP_WHEN_NO_GENERATOR_OR_MOCK_ENABLED` - when set to `true`, the library service will stop if no data generators or mocks are enabled. This is useful for scenarios where you want the service to terminate after setup if there's no need for continuous data generation or mock services. Default is `false`.
 
 #### Used by the `designer` service 
 
