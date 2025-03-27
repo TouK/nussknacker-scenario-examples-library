@@ -6,6 +6,9 @@ source /app/utils/lib.sh
 
 rm -rf /app/healthy
 
+export NU_DESIGNER_AUTH_HEADER
+export SCHEMA_REGISTRY_AUTH_HEADER
+
 /app/utils/configure-clients.sh
 
 if /app/mocks/db/is-postgres-ready.sh && /app/mocks/http-service/is-wiremock-ready.sh; then
