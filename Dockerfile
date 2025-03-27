@@ -40,6 +40,7 @@ COPY scenario-examples-bootstrapper/run-mocks-setup-data.sh /app/run-mocks-setup
 COPY scenario-examples-bootstrapper/services/postgres.sh /etc/service/db/run
 COPY scenario-examples-bootstrapper/services/wiremock.sh /etc/service/http-service/run
 COPY scenario-examples-bootstrapper/services/setup.sh /etc/service/setup/run
+COPY scenario-examples-bootstrapper/services/setup-finish.sh /etc/service/setup/finish
 
 COPY scenario-examples-library/ /tmp/scenario-examples
 
