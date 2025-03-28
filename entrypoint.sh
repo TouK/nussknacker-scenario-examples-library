@@ -1,5 +1,3 @@
-#!/bin/sh 
-
-set -e
+#!/bin/bash -e
 
 /sbin/my_init
