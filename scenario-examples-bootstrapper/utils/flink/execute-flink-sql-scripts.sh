@@ -3,6 +3,7 @@
 cd "$(dirname "$0")"
 
 source ../lib.sh
+source /configs/flink-sql-gateway
 
 if [ "$#" -ne 1 ]; then
     red_echo "ERROR: One parameter required: 1) Flink SQL script path\n"
