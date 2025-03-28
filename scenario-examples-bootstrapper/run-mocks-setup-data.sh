@@ -5,6 +5,7 @@ cd "$(dirname "$0")"
 source /app/utils/lib.sh
 
 rm -rf /app/.status
+mkdir -p /app/.status
 
 /app/utils/configure-clients.sh
 
