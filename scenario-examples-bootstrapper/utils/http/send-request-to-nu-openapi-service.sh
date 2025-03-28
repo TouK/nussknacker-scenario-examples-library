@@ -18,7 +18,7 @@ OPENAPI_SERVICE_SLUG=$1
 REQUEST_BODY=$2
 
 RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
-  -X POST "${NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS}/scenario/${OPENAPI_SERVICE_SLUG}" \
+  -X POST "http://${NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS}/scenario/${OPENAPI_SERVICE_SLUG}" \
   -H "Content-Type: application/json" -d "$REQUEST_BODY"
 )
 
