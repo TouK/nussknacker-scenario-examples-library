@@ -9,8 +9,8 @@ if [ "$#" -ne 2 ]; then
   exit 1
 fi
 
-if ! [ -v NU_REQUEST_RESPONSE_OPEN_API_SERVICE_URL ] || [ -z "$NU_REQUEST_RESPONSE_OPEN_API_SERVICE_URL" ]; then
-  red_echo "ERROR: required variable NU_REQUEST_RESPONSE_OPEN_API_SERVICE_URL not set or empty\n"
+if ! [ -v NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS ] || [ -z "$NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS" ]; then
+  red_echo "ERROR: required variable NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS not set or empty\n"
   exit 2
 fi
 
@@ -18,7 +18,7 @@ OPENAPI_SERVICE_SLUG=$1
 REQUEST_BODY=$2
 
 RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
-  -X POST "${NU_REQUEST_RESPONSE_OPEN_API_SERVICE_URL}/scenario/${OPENAPI_SERVICE_SLUG}" \
+  -X POST "${NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS}/scenario/${OPENAPI_SERVICE_SLUG}" \
   -H "Content-Type: application/json" -d "$REQUEST_BODY"
 )
 
