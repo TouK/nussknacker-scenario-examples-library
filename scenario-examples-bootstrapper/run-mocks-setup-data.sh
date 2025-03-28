@@ -4,7 +4,7 @@ cd "$(dirname "$0")"
 
 source /app/utils/lib.sh
 
-rm -rf /app/healthy
+rm -rf /app/.status
 
 /app/utils/configure-clients.sh
 
@@ -24,13 +24,10 @@ if /app/mocks/db/is-postgres-ready.sh && /app/mocks/http-service/is-wiremock-rea
   
   green_echo "------ Nu scenarios library sucessfully bootstrapped! ----\n\n"
   
-  touch /app/healthy
+  touch /app/.status/healthy
   
-  export GENERATORS_USED=false
-  export MOCKS_USED=false
-
   if [ "$STOP_WHEN_NO_GENERATOR_OR_MOCK_ENABLED" = "true" ]; then 
-    if [ "$GENERATORS_USED" = "false" ] && [ "$MOCKS_USED" = "false" ]; then
+    if [ ! -f /app/.status/generators-running ] && [ ! -f /app/.status/mocks-used ]; then
       green_echo "No generators or mocks used, stopping the library service..."
       exit 0
     fi

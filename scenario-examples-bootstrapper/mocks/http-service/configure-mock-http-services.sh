@@ -50,7 +50,7 @@ for ITEM in "$SCENARIO_EXAMPLE_DIR_PATH/mocks/http-service"/*; do
   if [ -d "$ITEM" ]; then
     copy_files_and_mappings "$ITEM"
     
-    MOCKS_USED=true
+    touch /app/.status/mocks-used
   fi
 done
 

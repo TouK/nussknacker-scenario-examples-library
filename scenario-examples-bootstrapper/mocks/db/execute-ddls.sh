@@ -44,7 +44,7 @@ for ITEM in "$SCENARIO_EXAMPLE_DIR_PATH/mocks/db"/*; do
   if [ -f "$ITEM" ]; then
     execute_ddl_script "$ITEM"
     
-    MOCKS_USED=true
+    touch /app/.status/mocks-used
   fi
 done
 
