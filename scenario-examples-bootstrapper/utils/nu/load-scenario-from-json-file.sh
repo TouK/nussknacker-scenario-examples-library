@@ -95,7 +95,7 @@ function import_scenario_from_file() {
   local RESPONSE
   RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
     -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
-    -X POST "${NU_DESIGNER_URL}/api/processes/import/$SCENARIO_NAME" \
+    -X POST "${NU_DESIGNER_URL}/api/processes/import/$(urlencode "$SCENARIO_NAME")" \
     -F "process=@$SCENARIO_FILE"
   )
 
@@ -135,7 +135,7 @@ function save_scenario() {
   local RESPONSE
   RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
     -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
-    -X PUT "${NU_DESIGNER_URL}/api/processes/$SCENARIO_NAME" \
+    -X PUT "${NU_DESIGNER_URL}/api/processes/$(urlencode "$SCENARIO_NAME")" \
     -H "Content-Type: application/json" -d "$REQUEST_BODY"
   )
 

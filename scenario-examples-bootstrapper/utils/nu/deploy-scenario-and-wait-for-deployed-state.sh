@@ -37,7 +37,7 @@ function deploy_scenario() {
   local RESPONSE
   RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
     -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
-    -X POST "${NU_DESIGNER_URL}/api/processManagement/deploy/$SCENARIO_NAME" \
+    -X POST "${NU_DESIGNER_URL}/api/processManagement/deploy/$(urlencode "$SCENARIO_NAME")" \
     -H "Content-Type: application/json" \
     -d '{"comment":"Scenario is deployed."}'
   )
@@ -68,7 +68,7 @@ function check_deployment_status() {
   local RESPONSE
   RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
     -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
-    -X GET "${NU_DESIGNER_URL}/api/processes/$SCENARIO_NAME/status"
+    -X GET "${NU_DESIGNER_URL}/api/processes/$(urlencode "$SCENARIO_NAME")/status"
   )
 
   local HTTP_STATUS

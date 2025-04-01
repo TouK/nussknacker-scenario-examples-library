@@ -150,3 +150,12 @@ function is_data_generation_active() {
   fi
 }
  
+function urlencode() {
+  if [ "$#" -ne 1 ]; then
+    red_echo "ERROR: One parameter required: 1) string to encode\n"
+    return 1
+  fi
+
+  VALUE=$1
+  jq -sRr @uri <<<"$VALUE"
+}
