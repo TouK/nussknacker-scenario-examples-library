@@ -157,5 +157,5 @@ function urlencode() {
   fi
 
   VALUE=$1
-  jq -sRr @uri <<<"$VALUE"
+  echo -n "$VALUE" | jq -sRr @uri
 }
