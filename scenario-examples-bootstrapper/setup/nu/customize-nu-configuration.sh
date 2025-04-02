@@ -10,7 +10,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 SCENARIO_EXAMPLE_DIR_PATH=${1%/}
-CONFS_DIR=/opt/nussknacker/conf
+CONFS_DIR=/opt/nussknacker/conf/additional
 APP_CUSTOMIZATION_FILE_PATH="$CONFS_DIR/additional-configuration.conf"
 
 function customize_nu_configuration() {
@@ -39,6 +39,7 @@ function customize_nu_configuration() {
 echo "Starting to customize Nu configuration..."
 
 mkdir -p "$CONFS_DIR"
+rm -rf "$APP_CUSTOMIZATION_FILE_PATH"
 touch "$APP_CUSTOMIZATION_FILE_PATH"
 
 shopt -s nullglob
