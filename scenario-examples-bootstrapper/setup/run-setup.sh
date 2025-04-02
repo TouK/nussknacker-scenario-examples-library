@@ -8,6 +8,8 @@ magenta_echo "-------- SETUP STAGE is starting... -------\n"
 
 shopt -s nullglob
 
+rm -rf /opt/nussknacker/conf/additional # fixme
+
 for FOLDER in /scenario-examples/*; do
   if is_scenario_enabled "$FOLDER"; then
     echo -e "Starting to configure and run example scenarios from ${GREEN}$FOLDER${RESET} directory...\n\n"
