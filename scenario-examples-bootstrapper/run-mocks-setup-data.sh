@@ -8,7 +8,7 @@ rm -rf /app/.status
 mkdir -p /app/.status
 
 /app/utils/configure-clients.sh
-rm -rf /opt/nussknacker/conf/additional # fixme
+rm -rf /opt/nussknacker/conf/additional/additional-configuration.conf # fixme
 
 if /app/mocks/db/is-postgres-ready.sh && /app/mocks/http-service/is-wiremock-ready.sh; then
   green_echo "------ Nu scenarios library is being prepared... ---------\n"
