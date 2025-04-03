@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 cd "$(dirname "$0")"
 
@@ -21,7 +21,7 @@ function reload_configuration() {
   local RESPONSE
   RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
     -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
-    -X POST "${NU_DESIGNER_URL}/api/app/processingtype/reload"
+    -X POST "${NU_DESIGNER_URL}/api/app/model/reload"
   )
 
   local HTTP_STATUS

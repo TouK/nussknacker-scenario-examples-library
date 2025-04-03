@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 cd "$(dirname "$0")"
 
@@ -69,7 +69,7 @@ done
 if ! ../../utils/nu/reload-configuration.sh; then
   RELOAD_EXIT_CODE=$?
   echo "Failed to reload configuration (exit code: $RELOAD_EXIT_CODE). Cleaning up..."
-  cleanup_nu_configuration
+  #cleanup_nu_configuration
   exit $RELOAD_EXIT_CODE
 fi
 
