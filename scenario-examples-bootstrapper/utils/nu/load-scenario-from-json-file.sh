@@ -65,20 +65,20 @@ function create_empty_scenario() {
     RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
     
     if [[ "$RESPONSE_BODY" == *"already exists"* ]]; then
-      echo "Scenario already exists."
-      exit 0
+      echo "Scenario '$SCENARIO_NAME' already exists."
+      return 0
     else
-      red_echo "ERROR: Cannot create empty scenario $SCENARIO_NAME.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+      red_echo "ERROR: Cannot create empty scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
       exit 12
     fi
   elif [ "$HTTP_STATUS" != "201" ]; then
     local RESPONSE_BODY
     RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
-    red_echo "ERROR: Cannot create empty scenario $SCENARIO_NAME.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+    red_echo "ERROR: Cannot create empty scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
     exit 13
   fi
 
-  echo "Empty scenario $SCENARIO_NAME created successfully."
+  echo "Empty scenario '$SCENARIO_NAME' created successfully."
 }
 
 function import_scenario_from_file() {
@@ -111,7 +111,7 @@ function import_scenario_from_file() {
     SCENARIO_GRAPH=$(echo "$RESPONSE_BODY" | jq '.scenarioGraph')
     echo "$SCENARIO_GRAPH"
   else
-    red_echo "ERROR: Cannot import scenario $SCENARIO_NAME.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+    red_echo "ERROR: Cannot import scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
     exit 22
   fi
 }
@@ -145,11 +145,11 @@ function save_scenario() {
   if [ "$HTTP_STATUS" != "200" ]; then
     local RESPONSE_BODY
     RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
-    red_echo "ERROR: Cannot save scenario $SCENARIO_NAME.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+    red_echo "ERROR: Cannot save scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
     exit 32
   fi
 
-  echo "Scenario $SCENARIO_NAME saved successfully."
+  echo "Scenario '$SCENARIO_NAME' saved successfully."
 }
 
 SCENARIO_FILE_NAME="${SCENARIO_FILE_PATH%.*}"

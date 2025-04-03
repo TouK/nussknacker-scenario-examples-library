@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 cd "$(dirname "$0")"
 
@@ -21,7 +21,7 @@ if ! [ -v NU_DESIGNER_AUTH_HEADER ] || [ -z "$NU_DESIGNER_AUTH_HEADER" ]; then
 fi
 
 SCENARIO_NAME=$1
-TIMEOUT_SECONDS=${2:-60}
+TIMEOUT_SECONDS=${2:-120}
 WAIT_INTERVAL=5
 
 function deploy_scenario() {
@@ -86,7 +86,7 @@ function check_deployment_status() {
   echo "$SCENARIO_STATUS"
 }
 
-echo "Deploying scenario $SCENARIO_NAME..."
+echo "Deploying scenario '$SCENARIO_NAME'..."
 
 START_TIME=$(date +%s)
 END_TIME=$((START_TIME + TIMEOUT_SECONDS))
@@ -101,11 +101,11 @@ while true; do
 
   CURRENT_TIME=$(date +%s)
   if [ $CURRENT_TIME -gt $END_TIME ]; then
-    red_echo "ERROR: Timeout for waiting for different than DURING_DEPLOY state of $SCENARIO_NAME deployment reached!\n"
+    red_echo "ERROR: Timeout for waiting for different than DURING_DEPLOY state of '$SCENARIO_NAME' deployment reached!\n"
     exit 3
   fi
 
-  echo "$SCENARIO_NAME deployment state is $DEPLOYMENT_STATUS. Checking again in $WAIT_INTERVAL seconds..."
+  echo "'$SCENARIO_NAME' is busy. Deployment state is $DEPLOYMENT_STATUS. Checking again in $WAIT_INTERVAL seconds..."
   sleep $WAIT_INTERVAL
 done
 
@@ -121,12 +121,12 @@ while true; do
 
   CURRENT_TIME=$(date +%s)
   if [ $CURRENT_TIME -gt $END_TIME ]; then
-    red_echo "ERROR: Timeout for waiting for the RUNNING (or FINISHED) state of $SCENARIO_NAME deployment reached!\n"
+    red_echo "ERROR: Timeout for waiting for the RUNNING (or FINISHED) state of '$SCENARIO_NAME' deployment reached!\n"
     exit 4
   fi
 
-  echo "$SCENARIO_NAME deployment state is $DEPLOYMENT_STATUS. Checking again in $WAIT_INTERVAL seconds..."
+  echo "Waiting to be deployed. '$SCENARIO_NAME' deployment state is $DEPLOYMENT_STATUS. Checking again in $WAIT_INTERVAL seconds..."
   sleep $WAIT_INTERVAL
 done
 
-echo "Scenario $SCENARIO_NAME is $DEPLOYMENT_STATUS!"
+echo "Scenario '$SCENARIO_NAME' is $DEPLOYMENT_STATUS!"
