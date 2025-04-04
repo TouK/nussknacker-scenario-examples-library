@@ -45,7 +45,7 @@ services:
       KAFKA_ADDRESS: "kafka:9092"
       SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
     volumes:
-      - nussknacker_designer_shared_configuration:/opt/nussknacker/conf/
+      - nussknacker_designer_shared_configuration:/opt/nussknacker/conf/additional
 
   [...]
 
@@ -53,10 +53,10 @@ services:
     image: touk/nussknacker:latest_scala-2.12
     environment:
       EXAMPLE_SCENARIOS_LIBRARY_SERVICE_NAME: nu-example-scenarios-library
-      CONFIG_FILE: "/opt/nussknacker/conf/application.conf,/opt/nussknacker/conf/additional-configuration.conf"
+      CONFIG_FILE: "/opt/nussknacker/conf/application.conf,/opt/nussknacker/conf/additional/additional-configuration.conf"
     [...]
     volumes:
-      - nussknacker_designer_shared_configuration:/opt/nussknacker/conf
+      - nussknacker_designer_shared_configuration:/opt/nussknacker/conf/additional
     
   [...]
 
@@ -101,7 +101,7 @@ an access to the shared `additional-configuration.conf` file. The Bootstrapper i
 to the `additional-configuration.conf` and add proper "[include](https://github.com/lightbend/config/blob/main/HOCON.md#includes)" in this file.
 In the docker compose case (see the example above) to achieve it, you should: 
 1. create a shared configuration volume and mount it in `nu-example-scenarios-library` and `designer` services
-2. include `/opt/nussknacker/conf/additional-configuration.conf` in the `CONFIG_FILE` ENV value
+2. include `/opt/nussknacker/conf/additional/additional-configuration.conf` in the `CONFIG_FILE` ENV value
 
 ### Other configuration
 
