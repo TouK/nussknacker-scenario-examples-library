@@ -49,6 +49,8 @@ shopt -s nullglob
 for ITEM in "$SCENARIO_EXAMPLE_DIR_PATH/mocks/http-service"/*; do
   if [ -d "$ITEM" ]; then
     copy_files_and_mappings "$ITEM"
+    
+    touch /app/.status/mocks-used
   fi
 done
 

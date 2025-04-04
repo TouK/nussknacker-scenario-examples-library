@@ -48,6 +48,7 @@ for ITEM in "$SCENARIO_EXAMPLE_DIR_PATH/data/kafka/generated"/*; do
 
   run_message_sending "$TOPIC_NAME" "$ITEM"
 
+  touch /app/.status/generators-running
 done
 
 echo -e "Generators are running!\n"

@@ -40,12 +40,12 @@ services:
   nu-example-scenarios-library:
     image: touk/nussknacker-example-scenarios-library:latest
     environment:
-      NU_DESIGNER_ADDRESS: "designer:8080"
+      NU_DESIGNER_URL: "http://designer:8080"
       NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS: "designer:8181"
       KAFKA_ADDRESS: "kafka:9092"
-      SCHEMA_REGISTRY_ADDRESS: "schema-registry:8081"
+      SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
     volumes:
-      - nussknacker_designer_shared_configuration:/opt/nussknacker/conf/
+      - nussknacker_designer_shared_configuration:/opt/nussknacker/conf/additional
 
   [...]
 
@@ -53,10 +53,10 @@ services:
     image: touk/nussknacker:latest_scala-2.12
     environment:
       EXAMPLE_SCENARIOS_LIBRARY_SERVICE_NAME: nu-example-scenarios-library
-      CONFIG_FILE: "/opt/nussknacker/conf/application.conf,/opt/nussknacker/conf/additional-configuration.conf"
+      CONFIG_FILE: "/opt/nussknacker/conf/application.conf,/opt/nussknacker/conf/additional/additional-configuration.conf"
     [...]
     volumes:
-      - nussknacker_designer_shared_configuration:/opt/nussknacker/conf
+      - nussknacker_designer_shared_configuration:/opt/nussknacker/conf/additional
     
   [...]
 
@@ -69,17 +69,24 @@ volumes:
 
 #### Used by the `nu-example-scenarios-library` service
 
-- `NU_DESIGNER_ADDRESS` - it contains the address (with port) of the Designer API. It's used to import and deploy scenarios and for Nu 
+- `NU_DESIGNER_URL` - it contains URL of the Designer API. It's used to import and deploy scenarios and for Nu 
   configuration reloading. You should always configure one. 
-- `NU_DESIGNER_USER` - username used to authenticate with the Designer API when importing/deploying scenarios and reloading configuration
-- `NU_DESIGNER_PASSWORD` - password used to authenticate with the Designer API when importing/deploying scenarios and reloading configuration
-- `NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS` - it contains the address (with port) of the server which exposes Request-Response 
+- `NU_DESIGNER_AUTH_MODE` - authentication mode used when connecting to Designer API. Supported values are: `BASIC_AUTH` (default) - basic authentication using username/password (requires NU_DESIGNER_USER and NU_DESIGNER_PASSWORD to be set), `AUTH0` - authentication using Auth0 tokens (requires NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL, NU_DESIGNER_OAUTH_CLIENT_ID and NU_DESIGNER_OAUTH_CLIENT_SECRET to be set)
+- `NU_DESIGNER_USER` - username used to authenticate with the Designer API when importing/deploying scenarios and reloading configuration. Defaults to "admin"
+- `NU_DESIGNER_PASSWORD` - password used to authenticate with the Designer API when importing/deploying scenarios and reloading configuration. Defaults to "admin"
+- `NU_DESIGNER_OAUTH_M2M_TOKEN_API_URL` - URL of the Auth0 token endpoint used to obtain M2M (Machine-to-Machine) access tokens for Designer API authentication
+- `NU_DESIGNER_OAUTH_CLIENT_ID` - Auth0 client ID used for obtaining M2M access tokens
+- `NU_DESIGNER_OAUTH_CLIENT_SECRET` - Auth0 client secret used for obtaining M2M access tokens
+- `NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS` - it contains the address (with port) of the server which exposes Request-Response
   scenarios. You will need it when you want to run Request-Response scenario example using the library with requests generator.
-- `KAFKA_ADDRESS` - it contains the address (With port) of a Kafka service. You will need it when you want to run streaming examples 
+- `KAFKA_AUTH_MODE` - authentication mode used when connecting to Kafka. Supported values are: `NO_AUTH` (default) - no authentication (requires KAFKA_ADDRESS to be set), `FILE_DEFINED_AUTH` - use custom Kafka authentication configuration from the `/configs/kaf` file (see https://github.com/birdayz/kaf/tree/master/examples)
+- `KAFKA_ADDRESS` - (only required when `KAFKA_AUTH_MODE: NO_AUTH` is set) it contains the address (with port) of a Kafka service. You will need it when you want to run streaming examples.
   with Kafka sources. It's used to create topics and by generator to generate example messages.
-- `SCHEMA_REGISTRY_ADDRESS` - it contains the address (with port) of a Schema Registry service. You will need it when you want to run 
+- `SCHEMA_REGISTRY_URL` - it contains the URL of a Schema Registry service. You will need it when you want to run 
   streaming examples with Kafka sources. It's used to create schemas for Kafka topics.
-- `FLINK_SQL_GATEWAY_ADDRESS` - it contains the address (with port) of the [Flink SQL Gateway](https://nightlies.apache.org/flink/flink-docs-master/docs/dev/table/sql-gateway/overview/). You will need it when you want to run batch examples. It's used to create Flink tables and insert data.
+- `SCHEMA_REGISTRY_USER` - username used to authenticate with the Schema Registry API when creating schemas for Kafka topics. Defaults to "admin"
+- `SCHEMA_REGISTRY_PASSWORD` - password used to authenticate with the Schema Registry API when creating schemas for Kafka topics. Defaults to "admin"
+- `FLINK_SQL_GATEWAY_URL` - it contains the URL of the [Flink SQL Gateway](https://nightlies.apache.org/flink/flink-docs-master/docs/dev/table/sql-gateway/overview/). You will need it when you want to run batch examples. It's used to create Flink tables and insert data.
 
 #### Used by the `designer` service 
 
@@ -94,7 +101,7 @@ an access to the shared `additional-configuration.conf` file. The Bootstrapper i
 to the `additional-configuration.conf` and add proper "[include](https://github.com/lightbend/config/blob/main/HOCON.md#includes)" in this file.
 In the docker compose case (see the example above) to achieve it, you should: 
 1. create a shared configuration volume and mount it in `nu-example-scenarios-library` and `designer` services
-2. include `/opt/nussknacker/conf/additional-configuration.conf` in the `CONFIG_FILE` ENV value
+2. include `/opt/nussknacker/conf/additional/additional-configuration.conf` in the `CONFIG_FILE` ENV value
 
 ### Other configuration
 
@@ -122,6 +129,11 @@ You can disable only data generation for all the examples from the library by se
 You can disable scenario deployment (in fact, the scenario will be deployed but then it will be canceled) for a specific
 example by setting e.g. `LOAN_REQUEST_DEPLOY: false` - this ENV ensures that the `loan-request' scenario example is not 
 active when the data data generation is started.
+
+#### Keep the service alive
+
+The library service can be configured to automatically stop when no data generators or mock services are actively being used. This behavior is controlled by the `STOP_WHEN_NO_GENERATOR_OR_MOCK_ENABLED` environment variable. When set to `true`, the service will terminate after completing the initial setup if there are no active generators or mocks, which is useful for scenarios that only require the setup phase. By default, this option is set to `false`, meaning the service will continue running regardless of generator or mock usage.
+
 
 ### Additional outside requirements
 
@@ -456,7 +468,7 @@ message per line.
 Dynamic HTTP requests are provided by generator scripts (the scripts basically provide request's body payload, because at the moment 
 we support only POST requests). The scripts should be placed in the `{scenario-name}/data/http/generated` folder. The URL, 
 the request generated by the script will be sent to, consists of a static path and a dynamic part taken from the name of the script file 
-(e.g. script `loan.sh` generates requests that will be sent to `http://$NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS/scenario/loan`).
+(e.g. script `loan.sh` generates requests that will be sent to `http://${NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS}/scenario/loan`).
 A script should echo a string (e.g. stringified JSON). 
 
 > 💡 You can use `/app/utils/lib.sh` script to import helpers that contains set of functions that will help you to create the data. Please,
@@ -483,7 +495,7 @@ A script should echo a string (e.g. stringified JSON).
 
 Static HTTP requests (payloads) are provided with text file placed in the `{scenario-name}/data/http/static` folder. The URL 
 consists of a static path and a dynamic part taken from the name of the file  (e.g. `loan.txt` contains requests that will be 
-sent to `http://$NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS/scenario/loan`). The file contains request payload per line. 
+sent to `http://${NU_REQUEST_RESPONSE_OPEN_API_SERVICE_ADDRESS}/scenario/loan`). The file contains request payload per line. 
 
 <details>
   <summary>Example</summary>

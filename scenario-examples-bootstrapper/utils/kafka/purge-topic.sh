@@ -9,13 +9,8 @@ if [ "$#" -ne 1 ]; then
   exit 1
 fi
 
-if ! [ -v KAFKA_ADDRESS ] || [ -z "$KAFKA_ADDRESS" ]; then
-  red_echo "ERROR: required variable KAFKA_ADDRESS not set or empty\n"
-  exit 2
-fi
-
 TOPIC_NAME=$1
 
-kaf --brokers="$KAFKA_ADDRESS" topic delete "$TOPIC_NAME" > /dev/null
+kaf --config /configs/kaf topic delete "$TOPIC_NAME" > /dev/null
 sleep 0.5
 ./create-topic-idempotently.sh "$TOPIC_NAME"

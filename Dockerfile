@@ -6,8 +6,7 @@ RUN apt-get update && \
 
 FROM phusion/baseimage:noble-1.0.0
 
-# Use baseimage-docker's init system.
-CMD ["/sbin/my_init"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 WORKDIR /app
 
@@ -31,6 +30,9 @@ COPY --from=wiremock /home/wiremock /home/wiremock
 EXPOSE 8080
 EXPOSE 5432
 
+COPY entrypoint.sh /entrypoint.sh
+COPY healthcheck.sh /healthcheck.sh
+
 COPY scenario-examples-bootstrapper/setup/ /app/setup/
 COPY scenario-examples-bootstrapper/mocks/ /app/mocks/
 COPY scenario-examples-bootstrapper/data/ /app/data/
@@ -40,8 +42,9 @@ COPY scenario-examples-bootstrapper/run-mocks-setup-data.sh /app/run-mocks-setup
 COPY scenario-examples-bootstrapper/services/postgres.sh /etc/service/db/run
 COPY scenario-examples-bootstrapper/services/wiremock.sh /etc/service/http-service/run
 COPY scenario-examples-bootstrapper/services/setup.sh /etc/service/setup/run
+COPY scenario-examples-bootstrapper/services/setup-finish.sh /etc/service/setup/finish
 
 COPY scenario-examples-library/ /tmp/scenario-examples
 
-HEALTHCHECK --interval=10s --timeout=1s --retries=12 --start-period=30s \
-  CMD (/app/setup/is-setup-done.sh && /app/mocks/db/is-postgres-ready.sh && /app/mocks/http-service/is-wiremock-ready.sh) || exit 1
+HEALTHCHECK --interval=10s --timeout=1s --retries=30 --start-period=60s \
+  CMD /healthcheck.sh

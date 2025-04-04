@@ -3,25 +3,21 @@
 cd "$(dirname "$0")"
 
 source ../lib.sh
+source /configs/nu-designer
 
 if [ "$#" -lt 2 ]; then
   red_echo "ERROR: Two parameters required: 1) scenario name, 2) scenario file path\n"
   exit 1
 fi
 
-if ! [ -v NU_DESIGNER_ADDRESS ] || [ -z "$NU_DESIGNER_ADDRESS" ]; then
-  red_echo "ERROR: required variable NU_DESIGNER_ADDRESS not set or empty\n"
+if ! [ -v NU_DESIGNER_URL ] || [ -z "$NU_DESIGNER_URL" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_URL not set or empty\n"
   exit 2
 fi
 
-if ! [ -v NU_DESIGNER_USER ] || [ -z "$NU_DESIGNER_USER" ]; then
-  red_echo "ERROR: required variable NU_DESIGNER_USER not set or empty\n"
+if ! [ -v NU_DESIGNER_AUTH_HEADER ] || [ -z "$NU_DESIGNER_AUTH_HEADER" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_AUTH_HEADER not set or empty\n"
   exit 3
-fi
-
-if ! [ -v NU_DESIGNER_PASSWORD ] || [ -z "$NU_DESIGNER_PASSWORD" ]; then
-  red_echo "ERROR: required variable NU_DESIGNER_PASSWORD not set or empty\n"
-  exit 4
 fi
 
 SCENARIO_NAME=$1
@@ -30,7 +26,7 @@ CATEGORY=${3:-"Default"}
 
 if [ ! -f "$SCENARIO_FILE_PATH" ]; then
   red_echo "ERROR: Cannot find file $SCENARIO_FILE_PATH with scenario\n"
-  exit 5
+  exit 4
 fi
 
 function create_empty_scenario() {
@@ -55,8 +51,9 @@ function create_empty_scenario() {
   }"
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
-    -X POST "http://${NU_DESIGNER_ADDRESS}/api/processes" \
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
+    -X POST "${NU_DESIGNER_URL}/api/processes" \
     -H "Content-Type: application/json" -d "$REQUEST_BODY"
   )
 
@@ -68,20 +65,20 @@ function create_empty_scenario() {
     RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
     
     if [[ "$RESPONSE_BODY" == *"already exists"* ]]; then
-      echo "Scenario already exists."
-      exit 0
+      echo "Scenario '$SCENARIO_NAME' already exists."
+      return 0
     else
-      red_echo "ERROR: Cannot create empty scenario $SCENARIO_NAME.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+      red_echo "ERROR: Cannot create empty scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
       exit 12
     fi
   elif [ "$HTTP_STATUS" != "201" ]; then
     local RESPONSE_BODY
     RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
-    red_echo "ERROR: Cannot create empty scenario $SCENARIO_NAME.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+    red_echo "ERROR: Cannot create empty scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
     exit 13
   fi
 
-  echo "Empty scenario $SCENARIO_NAME created successfully."
+  echo "Empty scenario '$SCENARIO_NAME' created successfully."
 }
 
 function import_scenario_from_file() {
@@ -96,8 +93,9 @@ function import_scenario_from_file() {
   local SCENARIO_FILE=$2
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
-    -X POST "http://${NU_DESIGNER_ADDRESS}/api/processes/import/$SCENARIO_NAME" \
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
+    -X POST "${NU_DESIGNER_URL}/api/processes/import/$(urlencode "$SCENARIO_NAME")" \
     -F "process=@$SCENARIO_FILE"
   )
 
@@ -113,7 +111,7 @@ function import_scenario_from_file() {
     SCENARIO_GRAPH=$(echo "$RESPONSE_BODY" | jq '.scenarioGraph')
     echo "$SCENARIO_GRAPH"
   else
-    red_echo "ERROR: Cannot import scenario $SCENARIO_NAME.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+    red_echo "ERROR: Cannot import scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
     exit 22
   fi
 }
@@ -135,8 +133,9 @@ function save_scenario() {
   }"
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
-    -X PUT "http://${NU_DESIGNER_ADDRESS}/api/processes/$SCENARIO_NAME" \
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
+    -X PUT "${NU_DESIGNER_URL}/api/processes/$(urlencode "$SCENARIO_NAME")" \
     -H "Content-Type: application/json" -d "$REQUEST_BODY"
   )
 
@@ -146,11 +145,11 @@ function save_scenario() {
   if [ "$HTTP_STATUS" != "200" ]; then
     local RESPONSE_BODY
     RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
-    red_echo "ERROR: Cannot save scenario $SCENARIO_NAME.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+    red_echo "ERROR: Cannot save scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
     exit 32
   fi
 
-  echo "Scenario $SCENARIO_NAME saved successfully."
+  echo "Scenario '$SCENARIO_NAME' saved successfully."
 }
 
 SCENARIO_FILE_NAME="${SCENARIO_FILE_PATH%.*}"

@@ -1,3 +1,3 @@
 #!/bin/bash -e
 
-test -f "/app/healthy"
+test -f "/app/.status/healthy"

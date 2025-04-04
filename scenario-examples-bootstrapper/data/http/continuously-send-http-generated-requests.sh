@@ -48,6 +48,7 @@ for ITEM in "$SCENARIO_EXAMPLE_DIR_PATH/data/http/generated"/*; do
 
   run_request_sending "$OPENAPI_SERVICE_SLUG" "$ITEM"
 
+  touch /app/.status/generators-running
 done
 
 echo -e "Generators are running!\n"

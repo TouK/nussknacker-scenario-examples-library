@@ -3,6 +3,7 @@
 cd "$(dirname "$0")"
 
 source ../lib.sh
+source /configs/nu-designer
 
 if [ "$#" -lt 2 ]; then
   red_echo "ERROR: Two parameters required: 1) scenario name, 2) scenario JSON\n"

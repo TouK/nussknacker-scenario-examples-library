@@ -39,9 +39,9 @@ for ITEM in "$SCENARIO_EXAMPLE_DIR_PATH/setup/kafka"/*; do
     exit 2
   fi
 
-  while IFS= read -r TOPIC_NAME; do
+  while IFS= read -r TOPIC_NAME || [ -n "$TOPIC_NAME" ]; do
 
-    if [[ $TOPIC_NAME == "#"* ]]; then
+    if [[ $TOPIC_NAME == "#"* ]] || [[ -z "${TOPIC_NAME// }" ]]; then
       continue
     fi
 

@@ -5,13 +5,14 @@ cd "$(dirname "$0")"
 source ../../utils/lib.sh
 
 if [ "$#" -ne 1 ]; then
-    red_echo "ERROR: One parameter required: 1) scenario example folder path\n"
-    exit 1
+  red_echo "ERROR: One parameter required: 1) scenario example folder path\n"
+  exit 1
 fi
 
 SCENARIO_EXAMPLE_DIR_PATH=${1%/}
-CONFS_DIR=/opt/nussknacker/conf
+CONFS_DIR=/opt/nussknacker/conf/additional
 APP_CUSTOMIZATION_FILE_PATH="$CONFS_DIR/additional-configuration.conf"
+ADDED_LINES=0
 
 function customize_nu_configuration() {
   if [ "$#" -ne 2 ]; then
@@ -32,8 +33,16 @@ function customize_nu_configuration() {
 
   if ! grep -qxF "$INCLUDE_CONF_LINE" "$APP_CUSTOMIZATION_FILE_PATH"; then
     echo "$INCLUDE_CONF_LINE" >> "$APP_CUSTOMIZATION_FILE_PATH"
+    ((ADDED_LINES++))
   fi
   echo "OK"
+}
+
+function cleanup_nu_configuration() {
+  if [ $ADDED_LINES -gt 0 ]; then
+    sed -i "$(( $(wc -l < "$APP_CUSTOMIZATION_FILE_PATH") - $ADDED_LINES + 1 )),\$d" "$APP_CUSTOMIZATION_FILE_PATH"
+  fi
+  rm -f "$CONFS_DIR"/"$(basename "$SCENARIO_EXAMPLE_DIR_PATH")"-*.conf
 }
 
 echo "Starting to customize Nu configuration..."
@@ -57,6 +66,11 @@ for ITEM in "$SCENARIO_EXAMPLE_DIR_PATH/setup/nu-designer"/*; do
   customize_nu_configuration "$ITEM" "$SCENARIO_EXAMPLE_ID"
 done
 
-../../utils/nu/reload-configuration.sh
+if ! ../../utils/nu/reload-configuration.sh; then
+  RELOAD_EXIT_CODE=$?
+  echo "Failed to reload configuration (exit code: $RELOAD_EXIT_CODE). Cleaning up..."
+  cleanup_nu_configuration
+  exit $RELOAD_EXIT_CODE
+fi
 
 echo -e "Configuration customized!\n"

@@ -3,25 +3,21 @@
 cd "$(dirname "$0")"
 
 source ../lib.sh
+source /configs/nu-designer
 
 if [ "$#" -lt 1 ]; then
   red_echo "ERROR: One parameter required: 1) scenario name\n"
   exit 1
 fi
 
-if ! [ -v NU_DESIGNER_ADDRESS ] || [ -z "$NU_DESIGNER_ADDRESS" ]; then
-  red_echo "ERROR: required variable NU_DESIGNER_ADDRESS not set or empty\n"
+if ! [ -v NU_DESIGNER_URL ] || [ -z "$NU_DESIGNER_URL" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_URL not set or empty\n"
   exit 2
 fi
 
-if ! [ -v NU_DESIGNER_USER ] || [ -z "$NU_DESIGNER_USER" ]; then
-  red_echo "ERROR: required variable NU_DESIGNER_USER not set or empty\n"
+if ! [ -v NU_DESIGNER_AUTH_HEADER ] || [ -z "$NU_DESIGNER_AUTH_HEADER" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_AUTH_HEADER not set or empty\n"
   exit 3
-fi
-
-if ! [ -v NU_DESIGNER_PASSWORD ] || [ -z "$NU_DESIGNER_PASSWORD" ]; then
-  red_echo "ERROR: required variable NU_DESIGNER_PASSWORD not set or empty\n"
-  exit 4
 fi
 
 SCENARIO_NAME=$1
@@ -39,8 +35,9 @@ function cancel_scenario() {
   local SCENARIO_NAME=$1
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
-    -X POST "http://${NU_DESIGNER_ADDRESS}/api/processManagement/cancel/$SCENARIO_NAME" \
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
+    -X POST "${NU_DESIGNER_URL}/api/processManagement/cancel/$(urlencode "$SCENARIO_NAME")" \
     -H "Content-Type: application/json" \
     -d '{"comment":"Scenario is cancelled."}'
   )
@@ -69,8 +66,9 @@ function check_cancellation_status() {
   local SCENARIO_NAME=$1
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
-    -X GET "http://${NU_DESIGNER_ADDRESS}/api/processes/$SCENARIO_NAME/status"
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
+    -X GET "${NU_DESIGNER_URL}/api/processes/$(urlencode "$SCENARIO_NAME")/status"
   )
 
   local HTTP_STATUS

@@ -1,12 +1,17 @@
 #!/bin/bash -e
 
 RED='\033[31m'
+ORANGE='\033[33m'
 GREEN='\033[32m'
 MAGENTA='\033[35m'
 RESET='\033[0m'
 
 function red_echo() {
   echo -e "${RED}$1${RESET}"
+}
+
+function orange_echo() {
+  echo -e "${ORANGER}$1${RESET}"
 }
 
 function green_echo() {
@@ -145,3 +150,12 @@ function is_data_generation_active() {
   fi
 }
  
+function urlencode() {
+  if [ "$#" -ne 1 ]; then
+    red_echo "ERROR: One parameter required: 1) string to encode\n"
+    return 1
+  fi
+
+  VALUE=$1
+  echo -n "$VALUE" | jq -sRr @uri
+}

@@ -3,28 +3,25 @@
 cd "$(dirname "$0")"
 
 source ../lib.sh
+source /configs/nu-designer
 
-if ! [ -v NU_DESIGNER_ADDRESS ] || [ -z "$NU_DESIGNER_ADDRESS" ]; then
-  red_echo "ERROR: required variable NU_DESIGNER_ADDRESS not set or empty\n"
+if ! [ -v NU_DESIGNER_URL ] || [ -z "$NU_DESIGNER_URL" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_URL not set or empty\n"
   exit 1
 fi
 
-if ! [ -v NU_DESIGNER_USER ] || [ -z "$NU_DESIGNER_USER" ]; then
-  red_echo "ERROR: required variable NU_DESIGNER_USER not set or empty\n"
+if ! [ -v NU_DESIGNER_AUTH_HEADER ] || [ -z "$NU_DESIGNER_AUTH_HEADER" ]; then
+  red_echo "ERROR: required variable NU_DESIGNER_AUTH_HEADER not set or empty\n"
   exit 2
-fi
-
-if ! [ -v NU_DESIGNER_PASSWORD ] || [ -z "$NU_DESIGNER_PASSWORD" ]; then
-  red_echo "ERROR: required variable NU_DESIGNER_PASSWORD not set or empty\n"
-  exit 3
 fi
 
 function reload_configuration() {
   set -e
 
   local RESPONSE
-  RESPONSE=$(curl -s -L -w "\n%{http_code}" -u "$NU_DESIGNER_USER:$NU_DESIGNER_PASSWORD" \
-    -X POST "http://${NU_DESIGNER_ADDRESS}/api/app/processingtype/reload"
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
+    -X POST "${NU_DESIGNER_URL}/api/app/model/reload"
   )
 
   local HTTP_STATUS
