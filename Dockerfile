@@ -46,5 +46,6 @@ COPY scenario-examples-bootstrapper/services/setup-finish.sh /etc/service/setup/
 
 COPY scenario-examples-library/ /tmp/scenario-examples
 
+# this is a default healthcheck. You can override it by setting HEALTHCHECK in docker-compose.yml
 HEALTHCHECK --interval=10s --timeout=1s --retries=30 --start-period=60s \
   CMD /healthcheck.sh
