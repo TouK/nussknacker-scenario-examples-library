@@ -12,7 +12,7 @@ cd .github/workflows/scripts
 rm -rf nussknacker-quickstart
 git clone https://github.com/TouK/nussknacker-quickstart.git
 cd nussknacker-quickstart
-git checkout NU-2024/bump_examples_library # TODO: change to main when Nu 1.17 is released
+git checkout staging # TODO: change to main when Nu 1.17 is released
 
 echo "3. Setting proper Scenario Examples Library image version..."
 if [[ "$OSTYPE" == "darwin"* ]]; then
