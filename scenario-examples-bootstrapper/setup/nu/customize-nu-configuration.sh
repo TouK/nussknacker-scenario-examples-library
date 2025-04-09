@@ -66,8 +66,10 @@ for ITEM in "$SCENARIO_EXAMPLE_DIR_PATH/setup/nu-designer"/*; do
   customize_nu_configuration "$ITEM" "$SCENARIO_EXAMPLE_ID"
 done
 
-if ! ../../utils/nu/reload-configuration.sh; then
-  RELOAD_EXIT_CODE=$?
+../../utils/nu/reload-configuration.sh
+RELOAD_EXIT_CODE=$?
+
+if [ $RELOAD_EXIT_CODE -ne 0 ]; then
   echo "Failed to reload configuration (exit code: $RELOAD_EXIT_CODE). Cleaning up..."
   cleanup_nu_configuration
   exit $RELOAD_EXIT_CODE
