@@ -87,7 +87,7 @@ volumes:
 - `SCHEMA_REGISTRY_USER` - username used to authenticate with the Schema Registry API when creating schemas for Kafka topics. Defaults to "admin"
 - `SCHEMA_REGISTRY_PASSWORD` - password used to authenticate with the Schema Registry API when creating schemas for Kafka topics. Defaults to "admin"
 - `FLINK_SQL_GATEWAY_URL` - it contains the URL of the [Flink SQL Gateway](https://nightlies.apache.org/flink/flink-docs-master/docs/dev/table/sql-gateway/overview/). You will need it when you want to run batch examples. It's used to create Flink tables and insert data.
-- `SCENARIO_DEPLOYMENT_TIMEOUT_SECONDS` - maximum time in seconds to wait for scenario deployment to complete. If deployment takes longer than this timeout, the process will fail. Defaults to 720 seconds (12 minutes).
+- `SCENARIO_DEPLOYMENT_TIMEOUT_SECONDS` - maximum time in seconds to wait for scenario deployment to complete. If deployment takes longer than this timeout, the process will fail. Defaults to 120 seconds (2 minutes).
 
 #### Used by the `designer` service 
 
