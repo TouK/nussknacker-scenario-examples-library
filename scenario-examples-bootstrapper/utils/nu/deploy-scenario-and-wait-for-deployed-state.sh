@@ -97,6 +97,8 @@ while true; do
 
   if [[ "$DEPLOYMENT_STATUS" != "DURING_DEPLOY" ]]; then
     break
+  else if [[ "$DEPLOYMENT_STATUS" != "PROBLEM" ]]; then
+    ./cancel-scenario-and-wait-for-canceled-state.sh "$SCENARIO_NAME"
   fi
 
   CURRENT_TIME=$(date +%s)
@@ -108,8 +110,6 @@ while true; do
   echo "'$SCENARIO_NAME' is busy. Deployment state is $DEPLOYMENT_STATUS. Checking again in $WAIT_INTERVAL seconds..."
   sleep $WAIT_INTERVAL
 done
-
-./cancel-scenario-and-wait-for-canceled-state.sh "$SCENARIO_NAME"
 
 deploy_scenario "$SCENARIO_NAME"
 
