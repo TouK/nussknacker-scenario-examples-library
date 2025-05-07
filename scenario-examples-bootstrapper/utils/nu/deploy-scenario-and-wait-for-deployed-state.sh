@@ -109,6 +109,8 @@ while true; do
   sleep $WAIT_INTERVAL
 done
 
+./cancel-scenario-and-wait-for-canceled-state.sh "$SCENARIO_NAME"
+
 deploy_scenario "$SCENARIO_NAME"
 
 DEPLOYMENT_STATUS=""
