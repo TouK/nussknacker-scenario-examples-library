@@ -97,7 +97,7 @@ while true; do
 
   if [[ "$DEPLOYMENT_STATUS" != "DURING_DEPLOY" ]]; then
     break
-  else if [[ "$DEPLOYMENT_STATUS" != "PROBLEM" ]]; then
+  else if [[ "$DEPLOYMENT_STATUS" == "PROBLEM" ]]; then
     ./cancel-scenario-and-wait-for-canceled-state.sh "$SCENARIO_NAME"
   fi
 
