@@ -95,10 +95,12 @@ DEPLOYMENT_STATUS=""
 while true; do
   DEPLOYMENT_STATUS=$(check_deployment_status "$SCENARIO_NAME")
 
+  if [[ "$DEPLOYMENT_STATUS" == "PROBLEM" ]]; then
+    ./cancel-scenario-and-wait-for-canceled-state.sh "$SCENARIO_NAME"
+  fi
+
   if [[ "$DEPLOYMENT_STATUS" != "DURING_DEPLOY" ]]; then
     break
-  else if [[ "$DEPLOYMENT_STATUS" == "PROBLEM" ]]; then
-    ./cancel-scenario-and-wait-for-canceled-state.sh "$SCENARIO_NAME"
   fi
 
   CURRENT_TIME=$(date +%s)
