@@ -24,37 +24,6 @@ SCENARIO_NAME=$1
 TIMEOUT_SECONDS=${SCENARIO_DEPLOYMENT_TIMEOUT_SECONDS:-120}
 WAIT_INTERVAL=5
 
-function deploy_scenario() {
-  if [ "$#" -ne 1 ]; then
-      red_echo "ERROR: One parameter required: 1) scenario name\n"
-      exit 11
-  fi
-
-  set -e
-
-  local SCENARIO_NAME=$1
-
-  local RESPONSE
-  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
-    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
-    -X POST "${NU_DESIGNER_URL}/api/processManagement/deploy/$(urlencode "$SCENARIO_NAME")" \
-    -H "Content-Type: application/json" \
-    -d '{"comment":"Scenario is deployed."}'
-  )
-
-  local HTTP_STATUS
-  HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
-
-  if [ "$HTTP_STATUS" != "200" ]; then
-    local RESPONSE_BODY
-    RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
-    red_echo "ERROR: Cannot run scenario $SCENARIO_NAME deployment.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
-    exit 12
-  fi
-
-  echo "Scenario $SCENARIO_NAME deployment started..."
-}
-
 function check_deployment_status() {
   if [ "$#" -ne 1 ]; then
     red_echo "ERROR: One parameter required: 1) scenario name\n"
@@ -86,6 +55,44 @@ function check_deployment_status() {
   echo "$SCENARIO_STATUS"
 }
 
+function deploy_scenario() {
+  if [ "$#" -ne 1 ]; then
+      red_echo "ERROR: One parameter required: 1) scenario name\n"
+      exit 11
+  fi
+
+  set -e
+
+  local SCENARIO_NAME=$1
+
+  local DEPLOYMENT_STATUS
+  DEPLOYMENT_STATUS=$(check_deployment_status "$SCENARIO_NAME")
+  if [[ "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
+    echo "Scenario '$SCENARIO_NAME' is already deployed"
+    return
+  fi
+
+  local RESPONSE
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
+    -X POST "${NU_DESIGNER_URL}/api/processManagement/deploy/$(urlencode "$SCENARIO_NAME")" \
+    -H "Content-Type: application/json" \
+    -d '{"comment":"Scenario is deployed."}'
+  )
+
+  local HTTP_STATUS
+  HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
+
+  if [ "$HTTP_STATUS" != "200" ]; then
+    local RESPONSE_BODY
+    RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
+    red_echo "ERROR: Cannot run scenario $SCENARIO_NAME deployment.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+    exit 12
+  fi
+
+  echo "Scenario $SCENARIO_NAME deployment started..."
+}
+
 echo "Deploying scenario '$SCENARIO_NAME'..."
 
 START_TIME=$(date +%s)
@@ -105,7 +112,7 @@ while true; do
   fi
 
   CURRENT_TIME=$(date +%s)
-  if [ $CURRENT_TIME -gt $END_TIME ]; then
+  if [ "$CURRENT_TIME" -gt "$END_TIME" ]; then
     red_echo "ERROR: Timeout for waiting for different than DURING_DEPLOY state of '$SCENARIO_NAME' deployment reached!\n"
     exit 3
   fi
@@ -125,7 +132,7 @@ while true; do
   fi
 
   CURRENT_TIME=$(date +%s)
-  if [ $CURRENT_TIME -gt $END_TIME ]; then
+  if [ "$CURRENT_TIME" -gt "$END_TIME" ]; then
     red_echo "ERROR: Timeout for waiting for the RUNNING (or FINISHED) state of '$SCENARIO_NAME' deployment reached!\n"
     exit 4
   fi
