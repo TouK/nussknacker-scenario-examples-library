@@ -100,6 +100,11 @@ while true; do
     continue
   fi
 
+  if [[ "${DISABLE_SCENARIO_REDEPLOY,,}" == "true" && "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
+    echo "Scenario '$SCENARIO_NAME' deploy is skipped because it is already deployed and redeploy is disabled DISABLE_SCENARIO_REDEPLOY=$DISABLE_SCENARIO_REDEPLOY"
+    exit 0
+  fi
+
   if [[ "$DEPLOYMENT_STATUS" != "DURING_DEPLOY" ]]; then
     break
   fi
@@ -114,11 +119,7 @@ while true; do
   sleep $WAIT_INTERVAL
 done
 
-if [[ "${DISABLE_SCENARIO_REDEPLOY,,}" == "true" && "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
-  echo "Scenario '$SCENARIO_NAME' deploy is skipped because it is already deployed and redeploy is disabled DISABLE_SCENARIO_REDEPLOY=$DISABLE_SCENARIO_REDEPLOY"
-else
-  deploy_scenario "$SCENARIO_NAME"
-fi
+deploy_scenario "$SCENARIO_NAME"
 
 DEPLOYMENT_STATUS=""
 while true; do
