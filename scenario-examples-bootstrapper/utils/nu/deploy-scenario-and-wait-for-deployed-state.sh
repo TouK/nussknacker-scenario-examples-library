@@ -65,10 +65,8 @@ function deploy_scenario() {
 
   local SCENARIO_NAME=$1
 
-  local DEPLOYMENT_STATUS
-  DEPLOYMENT_STATUS=$(check_deployment_status "$SCENARIO_NAME")
-  if [[ "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
-    echo "Scenario '$SCENARIO_NAME' is already deployed"
+  if [[ "${DISABLE_SCENARIO_REDEPLOY,,}" == "true" && "$(check_deployment_status "$SCENARIO_NAME")" == "RUNNING" ]]; then
+    echo "Scenario '$SCENARIO_NAME' is already deployed and redeploy is disabled DISABLE_SCENARIO_REDEPLOY=$DISABLE_SCENARIO_REDEPLOY"
     return
   fi
 

@@ -131,6 +131,12 @@ You can disable scenario deployment (in fact, the scenario will be deployed but 
 example by setting e.g. `LOAN_REQUEST_DEPLOY: false` - this ENV ensures that the `loan-request' scenario example is not 
 active when the data data generation is started.
 
+#### Disabling scenario redeploy
+
+You can disable scenario redeploy (e.g. deploy the new scenario version on flink while the old version is currently
+running) by settings e.g. `DISABLE_SCENARIO_REDEPLOY: true`. This flag is useful when you only want to bootstrap 
+scenarios for tests.
+
 #### Keep the service alive
 
 The library service can be configured to automatically stop when no data generators or mock services are actively being used. This behavior is controlled by the `STOP_WHEN_NO_GENERATOR_OR_MOCK_ENABLED` environment variable. When set to `true`, the service will terminate after completing the initial setup if there are no active generators or mocks, which is useful for scenarios that only require the setup phase. By default, this option is set to `false`, meaning the service will continue running regardless of generator or mock usage.
