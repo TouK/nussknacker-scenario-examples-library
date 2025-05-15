@@ -100,12 +100,17 @@ while true; do
     continue
   fi
 
+  if [[ "${DISABLE_SCENARIO_REDEPLOY,,}" == "true" && "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
+    echo "Scenario '$SCENARIO_NAME' deploy is skipped because it is already deployed and redeploy is disabled DISABLE_SCENARIO_REDEPLOY=$DISABLE_SCENARIO_REDEPLOY"
+    exit 0
+  fi
+
   if [[ "$DEPLOYMENT_STATUS" != "DURING_DEPLOY" ]]; then
     break
   fi
 
   CURRENT_TIME=$(date +%s)
-  if [ $CURRENT_TIME -gt $END_TIME ]; then
+  if [ "$CURRENT_TIME" -gt "$END_TIME" ]; then
     red_echo "ERROR: Timeout for waiting for different than DURING_DEPLOY state of '$SCENARIO_NAME' deployment reached!\n"
     exit 3
   fi
@@ -125,7 +130,7 @@ while true; do
   fi
 
   CURRENT_TIME=$(date +%s)
-  if [ $CURRENT_TIME -gt $END_TIME ]; then
+  if [ "$CURRENT_TIME" -gt "$END_TIME" ]; then
     red_echo "ERROR: Timeout for waiting for the RUNNING (or FINISHED) state of '$SCENARIO_NAME' deployment reached!\n"
     exit 4
   fi
