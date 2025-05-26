@@ -130,9 +130,9 @@ if [[ "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
     exit 0
   fi
   redeploy_scenario "$SCENARIO_NAME"
-elif [[ "$DEPLOYMENT_STATUS" == "CANCELED" ]]; then
+elif [[ "$DEPLOYMENT_STATUS" == "CANCELED" || "$DEPLOYMENT_STATUS" == "NOT_DEPLOYED" ]]; then
   deploy_scenario "$SCENARIO_NAME"
-elif [[ "$DEPLOYMENT_STATUS" != "NOT_DEPLOYED" ]]; then
+else
   ./cancel-scenario-and-wait-for-canceled-state.sh "$SCENARIO_NAME"
   deploy_scenario "$SCENARIO_NAME"
 fi
