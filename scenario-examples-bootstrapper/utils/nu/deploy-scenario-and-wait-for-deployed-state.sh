@@ -125,6 +125,10 @@ END_TIME=$((START_TIME + TIMEOUT_SECONDS))
 DEPLOYMENT_STATUS=$(check_deployment_status "$SCENARIO_NAME")
 
 if [[ "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
+  if [[ "${DISABLE_SCENARIO_REDEPLOY,,}" == "true" ]]; then
+    echo "Scenario '$SCENARIO_NAME' deploy is skipped because it is already deployed and redeploy is disabled DISABLE_SCENARIO_REDEPLOY=$DISABLE_SCENARIO_REDEPLOY"
+    exit 0
+  fi
   redeploy_scenario "$SCENARIO_NAME"
 elif [[ "$DEPLOYMENT_STATUS" == "CANCELED" ]]; then
   deploy_scenario "$SCENARIO_NAME"
