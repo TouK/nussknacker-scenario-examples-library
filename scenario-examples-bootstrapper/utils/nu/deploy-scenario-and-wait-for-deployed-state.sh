@@ -55,10 +55,41 @@ function deploy_scenario() {
   echo "Scenario $SCENARIO_NAME deployment started..."
 }
 
+function redeploy_scenario() {
+  if [ "$#" -ne 1 ]; then
+      red_echo "ERROR: One parameter required: 1) scenario name\n"
+      exit 21
+  fi
+
+  set -e
+
+  local SCENARIO_NAME=$1
+
+  local RESPONSE
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
+    -X POST "${NU_DESIGNER_URL}/api/processManagement/redeploy/$(urlencode "$SCENARIO_NAME")" \
+    -H "Content-Type: application/json" \
+    -d '{"comment":"Scenario is redeployed."}'
+  )
+
+  local HTTP_STATUS
+  HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
+
+  if [ "$HTTP_STATUS" != "200" ]; then
+    local RESPONSE_BODY
+    RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
+    red_echo "ERROR: Cannot run scenario $SCENARIO_NAME redeployment.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+    exit 22
+  fi
+
+  echo "Scenario $SCENARIO_NAME redeployment started..."
+}
+
 function check_deployment_status() {
   if [ "$#" -ne 1 ]; then
     red_echo "ERROR: One parameter required: 1) scenario name\n"
-    exit 21
+    exit 31
   fi
 
   set -e
@@ -78,7 +109,7 @@ function check_deployment_status() {
 
   if [ "$HTTP_STATUS" != "200" ]; then
     red_echo "ERROR: Cannot check scenario $SCENARIO_NAME deployment status.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
-    exit 22
+    exit 32
   fi
 
   local SCENARIO_STATUS
@@ -91,37 +122,21 @@ echo "Deploying scenario '$SCENARIO_NAME'..."
 START_TIME=$(date +%s)
 END_TIME=$((START_TIME + TIMEOUT_SECONDS))
 
-DEPLOYMENT_STATUS=""
-while true; do
-  DEPLOYMENT_STATUS=$(check_deployment_status "$SCENARIO_NAME")
+DEPLOYMENT_STATUS=$(check_deployment_status "$SCENARIO_NAME")
 
-  if [[ "$DEPLOYMENT_STATUS" == "PROBLEM" ]]; then
-    ./cancel-scenario-and-wait-for-canceled-state.sh "$SCENARIO_NAME"
-    continue
-  fi
-
-  if [[ "${DISABLE_SCENARIO_REDEPLOY,,}" == "true" && "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
+if [[ "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
+  if [[ "${DISABLE_SCENARIO_REDEPLOY,,}" == "true" ]]; then
     echo "Scenario '$SCENARIO_NAME' deploy is skipped because it is already deployed and redeploy is disabled DISABLE_SCENARIO_REDEPLOY=$DISABLE_SCENARIO_REDEPLOY"
     exit 0
   fi
+  redeploy_scenario "$SCENARIO_NAME"
+elif [[ "$DEPLOYMENT_STATUS" == "CANCELED" || "$DEPLOYMENT_STATUS" == "NOT_DEPLOYED" ]]; then
+  deploy_scenario "$SCENARIO_NAME"
+else
+  ./cancel-scenario-and-wait-for-canceled-state.sh "$SCENARIO_NAME"
+  deploy_scenario "$SCENARIO_NAME"
+fi
 
-  if [[ "$DEPLOYMENT_STATUS" != "DURING_DEPLOY" ]]; then
-    break
-  fi
-
-  CURRENT_TIME=$(date +%s)
-  if [ "$CURRENT_TIME" -gt "$END_TIME" ]; then
-    red_echo "ERROR: Timeout for waiting for different than DURING_DEPLOY state of '$SCENARIO_NAME' deployment reached!\n"
-    exit 3
-  fi
-
-  echo "'$SCENARIO_NAME' is busy. Deployment state is $DEPLOYMENT_STATUS. Checking again in $WAIT_INTERVAL seconds..."
-  sleep $WAIT_INTERVAL
-done
-
-deploy_scenario "$SCENARIO_NAME"
-
-DEPLOYMENT_STATUS=""
 while true; do
   DEPLOYMENT_STATUS=$(check_deployment_status "$SCENARIO_NAME")
 
