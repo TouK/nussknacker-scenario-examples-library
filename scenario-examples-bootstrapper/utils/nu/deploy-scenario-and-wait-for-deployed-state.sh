@@ -55,10 +55,41 @@ function deploy_scenario() {
   echo "Scenario $SCENARIO_NAME deployment started..."
 }
 
+function redeploy_scenario() {
+  if [ "$#" -ne 1 ]; then
+      red_echo "ERROR: One parameter required: 1) scenario name\n"
+      exit 21
+  fi
+
+  set -e
+
+  local SCENARIO_NAME=$1
+
+  local RESPONSE
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" \
+    -H "Authorization: $NU_DESIGNER_AUTH_HEADER" \
+    -X POST "${NU_DESIGNER_URL}/api/processManagement/redeploy/$(urlencode "$SCENARIO_NAME")" \
+    -H "Content-Type: application/json" \
+    -d '{"comment":"Scenario is redeployed."}'
+  )
+
+  local HTTP_STATUS
+  HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
+
+  if [ "$HTTP_STATUS" != "200" ]; then
+    local RESPONSE_BODY
+    RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
+    red_echo "ERROR: Cannot run scenario $SCENARIO_NAME redeployment.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+    exit 22
+  fi
+
+  echo "Scenario $SCENARIO_NAME redeployment started..."
+}
+
 function check_deployment_status() {
   if [ "$#" -ne 1 ]; then
     red_echo "ERROR: One parameter required: 1) scenario name\n"
-    exit 21
+    exit 31
   fi
 
   set -e
@@ -78,7 +109,7 @@ function check_deployment_status() {
 
   if [ "$HTTP_STATUS" != "200" ]; then
     red_echo "ERROR: Cannot check scenario $SCENARIO_NAME deployment status.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
-    exit 22
+    exit 32
   fi
 
   local SCENARIO_STATUS
@@ -93,13 +124,15 @@ END_TIME=$((START_TIME + TIMEOUT_SECONDS))
 
 DEPLOYMENT_STATUS=$(check_deployment_status "$SCENARIO_NAME")
 
-if [[ "$DEPLOYMENT_STATUS" != "CANCELED" ]]; then
+if [[ "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
+  redeploy_scenario "$SCENARIO_NAME"
+elif [[ "$DEPLOYMENT_STATUS" == "CANCELED" ]]; then
+  deploy_scenario "$SCENARIO_NAME"
+else
   ./cancel-scenario-and-wait-for-canceled-state.sh "$SCENARIO_NAME"
+  deploy_scenario "$SCENARIO_NAME"
 fi
-  
-deploy_scenario "$SCENARIO_NAME"
 
-DEPLOYMENT_STATUS=""
 while true; do
   DEPLOYMENT_STATUS=$(check_deployment_status "$SCENARIO_NAME")
 
