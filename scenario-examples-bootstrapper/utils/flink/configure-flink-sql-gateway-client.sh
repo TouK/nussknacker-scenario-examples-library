@@ -1,8 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source ../lib.sh
+configure_error_handling
 
 FLINK_SQL_GATEWAY_CONFIG_FILE="/configs/flink-sql-gateway"
 rm -f $FLINK_SQL_GATEWAY_CONFIG_FILE

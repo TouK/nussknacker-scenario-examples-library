@@ -1,8 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source ../utils/lib.sh
+configure_error_handling
 
 if is_data_generation_active; then 
   magenta_echo "-------- DATA GENERATION ACTIVATION STAGE is starting... ------\n"

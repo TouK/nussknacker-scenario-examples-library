@@ -1,8 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source lib.sh
+configure_error_handling
 
 kafka/configure-kafka-client.sh
 nu/configure-nu-client.sh

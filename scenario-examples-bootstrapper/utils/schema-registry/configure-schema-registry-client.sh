@@ -1,8 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source ../lib.sh
+configure_error_handling
 
 SCHEMA_REGISTRY_CONFIG_FILE="/configs/schema-registry"
 rm -f $SCHEMA_REGISTRY_CONFIG_FILE

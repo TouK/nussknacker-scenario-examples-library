@@ -1,8 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source ../lib.sh
+configure_error_handling
 
 if [ "$#" -ne 2 ]; then
     red_echo "ERROR: Two parameters required: 1) topic name, 2) generator script path\n"

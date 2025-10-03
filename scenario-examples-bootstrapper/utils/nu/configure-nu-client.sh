@@ -1,8 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source ../lib.sh
+configure_error_handling
 
 NU_DESIGNER_CONFIG_FILE="/configs/nu-designer"
 rm -f $NU_DESIGNER_CONFIG_FILE

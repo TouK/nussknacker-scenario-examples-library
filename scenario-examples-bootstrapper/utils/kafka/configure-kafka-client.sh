@@ -1,8 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source ../lib.sh
+configure_error_handling
 
 if ! [ -v KAFKA_AUTH_MODE ]; then
   echo "KAFKA_AUTH_MODE not set, using default value 'NO_AUTH'"

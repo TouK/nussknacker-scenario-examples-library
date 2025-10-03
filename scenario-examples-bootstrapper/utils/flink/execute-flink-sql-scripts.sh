@@ -1,8 +1,10 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source ../lib.sh
+configure_error_handling
+
 source /configs/flink-sql-gateway
 
 if [ "$#" -ne 1 ]; then
