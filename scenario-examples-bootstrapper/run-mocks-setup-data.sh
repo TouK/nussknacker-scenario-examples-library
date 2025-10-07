@@ -3,16 +3,18 @@
 cd "$(dirname "$0")"
 
 source /app/utils/lib.sh
-configure_error_handling
 
 rm -rf /app/.status
 mkdir -p /app/.status
 
-/app/utils/configure-clients.sh
-
 if /app/mocks/db/is-postgres-ready.sh && /app/mocks/http-service/is-wiremock-ready.sh; then
+  # We configure error trap after we check that Postgres and Wiremock is ready.
+  # Unavailability of these services is a normal situation because phusion/baseimage doesn't handle
+  # dependencies checking/service startup ordering
+  configure_error_handling
   green_echo "------ Nu scenarios library is being prepared... ---------\n"
-  
+  /app/utils/configure-clients.sh
+
   if are_embedded_examples_active; then 
     mkdir -p /scenario-examples
     if [ "$(ls -A /tmp/scenario-examples)" ]; then
