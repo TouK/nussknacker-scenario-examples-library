@@ -23,6 +23,7 @@ if ! [ -v NU_DESIGNER_AUTH_HEADER ] || [ -z "$NU_DESIGNER_AUTH_HEADER" ]; then
 fi
 
 SCENARIO_NAME=$1
+NEW_SCENARIO_VERSION=$2
 TIMEOUT_SECONDS=${SCENARIO_DEPLOYMENT_TIMEOUT_SECONDS:-120}
 WAIT_INTERVAL=5
 
@@ -116,7 +117,9 @@ function check_deployment_status() {
 
   local SCENARIO_STATUS
   SCENARIO_STATUS=$(echo "$RESPONSE_BODY" | jq -r '.status.name')
-  echo "$SCENARIO_STATUS"
+  local DEPLOYED_VERSION
+  DEPLOYED_VERSION=$(echo "$RESPONSE_BODY" | jq -r '.status.versionId')
+  echo "$SCENARIO_STATUS" "$DEPLOYED_VERSION"
 }
 
 echo "Deploying scenario '$SCENARIO_NAME'..."
@@ -124,11 +127,16 @@ echo "Deploying scenario '$SCENARIO_NAME'..."
 START_TIME=$(date +%s)
 END_TIME=$((START_TIME + TIMEOUT_SECONDS))
 
-DEPLOYMENT_STATUS=$(check_deployment_status "$SCENARIO_NAME")
+DEPLOYMENT_STATUS_RESULT=$(check_deployment_status "$SCENARIO_NAME")
+read -r DEPLOYMENT_STATUS DEPLOYED_VERSION <<< "$DEPLOYMENT_STATUS_RESULT"
+echo "Scenario '$SCENARIO_NAME' status is $DEPLOYMENT_STATUS, version is $DEPLOYED_VERSION; imported version was: $NEW_SCENARIO_VERSION"
 
 if [[ "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
   if [[ "${DISABLE_SCENARIO_REDEPLOY,,}" == "true" ]]; then
     echo "Scenario '$SCENARIO_NAME' deploy is skipped because it is already deployed and redeploy is disabled DISABLE_SCENARIO_REDEPLOY=$DISABLE_SCENARIO_REDEPLOY"
+    exit 0
+  elif [[ "$NEW_SCENARIO_VERSION" == "null" ]]; then
+    echo "Scenario '$SCENARIO_NAME' deploy is skipped because it is already deployed and nothing changed in the scenario"
     exit 0
   fi
   redeploy_scenario "$SCENARIO_NAME"
@@ -140,7 +148,8 @@ else
 fi
 
 while true; do
-  DEPLOYMENT_STATUS=$(check_deployment_status "$SCENARIO_NAME")
+  DEPLOYMENT_STATUS_RESULT=$(check_deployment_status "$SCENARIO_NAME")
+  read -r DEPLOYMENT_STATUS DEPLOYED_VERSION <<< "$DEPLOYMENT_STATUS_RESULT"
 
   if [[ "$DEPLOYMENT_STATUS" == "RUNNING" || "$DEPLOYMENT_STATUS" == "FINISHED" ]]; then
     break
@@ -152,7 +161,7 @@ while true; do
     exit 4
   fi
 
-  echo "Waiting to be deployed. '$SCENARIO_NAME' deployment state is $DEPLOYMENT_STATUS. Checking again in $WAIT_INTERVAL seconds..."
+  echo "Waiting to be deployed. '$SCENARIO_NAME' deployment state is $DEPLOYMENT_STATUS, version is $DEPLOYED_VERSION. Checking again in $WAIT_INTERVAL seconds..."
   sleep $WAIT_INTERVAL
 done
 
