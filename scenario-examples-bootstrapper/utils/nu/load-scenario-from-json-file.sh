@@ -67,7 +67,7 @@ function create_empty_scenario() {
     RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
     
     if [[ "$RESPONSE_BODY" == *"already exists"* ]]; then
-      echo "Scenario '$SCENARIO_NAME' already exists."
+      echo "Scenario '$SCENARIO_NAME' already exists." >&2
       return 0
     else
       red_echo "ERROR: Cannot create empty scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
@@ -144,35 +144,38 @@ function save_scenario() {
   local HTTP_STATUS
   HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
 
+  local RESPONSE_BODY
+  RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
   if [ "$HTTP_STATUS" != "200" ]; then
-    local RESPONSE_BODY
-    RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
     red_echo "ERROR: Cannot save scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
     exit 32
   fi
 
-  echo "Scenario '$SCENARIO_NAME' saved successfully."
+  local NEW_SCENARIO_VERSION
+  NEW_SCENARIO_VERSION=$(echo "$RESPONSE_BODY" | jq '.newVersion')
+
+  echo "$NEW_SCENARIO_VERSION"
 }
 
 SCENARIO_FILE_NAME="${SCENARIO_FILE_PATH%.*}"
 case "$SCENARIO_FILE_NAME" in
   *streaming)
-    echo "Assuming that scenario in $SCENARIO_FILE_PATH is a Streaming scenario..."
+    echo "Assuming that scenario in $SCENARIO_FILE_PATH is a Streaming scenario..." >&2
     ENGINE="Flink"
     PROCESSING_MODE="Unbounded-Stream"
     ;;
   *request-response)
-    echo "Assuming that scenario in $SCENARIO_FILE_PATH is a Request-Response scenario..."
+    echo "Assuming that scenario in $SCENARIO_FILE_PATH is a Request-Response scenario..." >&2
     ENGINE="Lite Embedded"
     PROCESSING_MODE="Request-Response"
     ;;
   *batch)
-    echo "Assuming that scenario in $SCENARIO_FILE_PATH is a Batch scenario..."
+    echo "Assuming that scenario in $SCENARIO_FILE_PATH is a Batch scenario..." >&2
     ENGINE="Flink"
     PROCESSING_MODE="Bounded-Stream"
     ;;
   *)
-    echo "Cannot distinguish processing mode based on scenario filename. Using metadata..."
+    echo "Cannot distinguish processing mode based on scenario filename. Using metadata..." >&2
     META_DATA_TYPE=$(jq -r .metaData.additionalFields.metaDataType < "$SCENARIO_FILE_PATH")
     case "$META_DATA_TYPE" in
       "StreamMetaData")

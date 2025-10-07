@@ -23,8 +23,9 @@ function import_and_deploy_scenario() {
   local EXAMPLE_SCENARIO_NAME=$1
   local EXAMPLE_SCENARIO_FILE=$2
 
-  ../../utils/nu/load-scenario-from-json-file.sh "$EXAMPLE_SCENARIO_NAME" "$EXAMPLE_SCENARIO_FILE"
-  ../../utils/nu/deploy-scenario-and-wait-for-deployed-state.sh "$EXAMPLE_SCENARIO_NAME"
+  local NEW_SCENARIO_VERSION
+  NEW_SCENARIO_VERSION=$(../../utils/nu/load-scenario-from-json-file.sh "$EXAMPLE_SCENARIO_NAME" "$EXAMPLE_SCENARIO_FILE")
+  ../../utils/nu/deploy-scenario-and-wait-for-deployed-state.sh "$EXAMPLE_SCENARIO_NAME" "$NEW_SCENARIO_VERSION"
 
   if ! should_deploy_scenario "$SCENARIO_EXAMPLE_DIR_PATH"; then
     ../../utils/nu/cancel-scenario-and-wait-for-canceled-state.sh "$EXAMPLE_SCENARIO_NAME"
