@@ -1,8 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source ../lib.sh
+configure_error_handling
 
 if [ "$#" -ne 1 ]; then
   red_echo "ERROR: One parameter required: 1) topic name\n"

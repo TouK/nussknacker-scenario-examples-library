@@ -1,8 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source ../utils/lib.sh
+configure_error_handling
 
 shopt -s nullglob
 

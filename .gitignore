@@ -6,3 +6,4 @@ target
 .vscode
 .DS_Store
 **/nussknacker-installation-example
+**/nussknacker-quickstart

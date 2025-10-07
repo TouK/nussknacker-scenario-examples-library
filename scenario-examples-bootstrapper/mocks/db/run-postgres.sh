@@ -1,8 +1,10 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source postgres-operations.sh
+source ../../utils/lib.sh
+configure_error_handling
 
 echo "Starting Postgres service..."
 

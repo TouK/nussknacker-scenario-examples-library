@@ -1,8 +1,10 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source ../lib.sh
+configure_error_handling
+
 source /configs/schema-registry
 
 if [ "$#" -ne 2 ]; then

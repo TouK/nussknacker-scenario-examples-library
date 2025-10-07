@@ -1,8 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source /app/utils/lib.sh
+configure_error_handling
 
 rm -rf /app/.status
 mkdir -p /app/.status

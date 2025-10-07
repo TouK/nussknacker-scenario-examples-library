@@ -1,8 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash
 
 cd "$(dirname "$0")"
 
 source ../lib.sh
+configure_error_handling
 
 if [ "$#" -ne 2 ]; then
     red_echo "ERROR: Two parameters required: 1) OpenAPI service slug, 2) request generator script path\n"

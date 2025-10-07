@@ -159,3 +159,38 @@ function urlencode() {
   VALUE=$1
   echo -n "$VALUE" | jq -sRr @uri
 }
+
+
+function on_exit() {
+  local exitcode=$?
+
+  set +x
+
+  if [ $exitcode -ne 0 ]; then
+      echo "========================================" >&2
+      echo "ERROR: Script failed on line $LAST_LINENO" >&2
+      echo "Exit code: $exitcode" >&2
+      echo "Failed command: $LAST_COMMAND" >&2
+      echo "----------------------------------------" >&2
+      echo "Last 30 commands executed:" >&2
+      tail -30 "$TRACE_LOG" >&2
+      echo "========================================" >&2
+  fi
+
+  rm -f "$TRACE_LOG"
+  exit $exitcode
+}
+
+
+function configure_error_handling() {
+  set -eE -o pipefail
+
+  TRACE_LOG=$(mktemp)
+  exec 19>"$TRACE_LOG"
+  BASH_XTRACEFD=19
+
+  trap 'LAST_LINENO=$LINENO; LAST_COMMAND=$BASH_COMMAND' DEBUG
+  trap 'on_exit' EXIT
+
+  set -x
+}

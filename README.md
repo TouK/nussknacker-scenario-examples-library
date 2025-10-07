@@ -225,51 +225,51 @@ Structure for a folder with a Scenario Example definition:
 ```bash
 scenario-examples-library
 ├── {scenario-example-1} # folder with all things needed by the example scenario
-│   ├── {name-of-scenario-example-1}.json # file with scenario (required)
-│   ├── data # static data and data generator scripts (optional)
-│   │   ├── kafka
-│   │   │   ├── generated
-│   │   │   │   └── {topic-01-name}.sh # script to generate message which will be sent to the topic "topic-01-name" (it will be called continuously)
-│   │   │   └── static
-│   │   │       └── {topic-01-name}.txt # list of messages which will be sent to topic "topic-01-name" (to send only once)
-│   │   ├── http
-│   │   │   ├── generated
-│   │   │   │   └── {open-api-service-slug}.sh # script to generate request body which will be sent with POST request to /scenarios/{open-api-service-slug} service (it will be called continuously)
-│   │   │   └── static
-│   │   │       └── {open-api-service-slug}.txt # list of request bodies which will be sent with POST request to /scenarios/{open-api-service-slug} service (to send only once)
+│   ├── {name-of-scenario-example-1}.json # file with scenario (required)
+│   ├── data # static data and data generator scripts (optional)
+│   │   ├── kafka
+│   │   │   ├── generated
+│   │   │   │   └── {topic-01-name}.sh # script to generate message which will be sent to the topic "topic-01-name" (it will be called continuously)
+│   │   │   └── static
+│   │   │       └── {topic-01-name}.txt # list of messages which will be sent to topic "topic-01-name" (to send only once)
+│   │   ├── http
+│   │   │   ├── generated
+│   │   │   │   └── {open-api-service-slug}.sh # script to generate request body which will be sent with POST request to /scenarios/{open-api-service-slug} service (it will be called continuously)
+│   │   │   └── static
+│   │   │       └── {open-api-service-slug}.txt # list of request bodies which will be sent with POST request to /scenarios/{open-api-service-slug} service (to send only once)
 |   |   └── flink
-│   │       └── static
-│   │           └── {dml-script}.sql # file with Flink SQL scripts that provides some data to test
+│   │       └── static
+│   │           └── {dml-script}.sql # file with Flink SQL scripts that provides some data to test
 │   ├── mocks # mock definitions (optional)
-│   │   └── db 
-│   │       ├── {db-schema-01-name}.sql # script with DDLs to import 
-│   │       └── {db-schema-02-name}.sql
-│   │   └── http-service
-│   │       └── {external-open-api-service-name} # name of an external Open API service
-│   │           ├── __files
-│   │           │   └── {external-open-api-service-name}
-│   │           │       ├── openapi
-│   │           │       │   └── {api-name}.yaml # it contains the external Open API service definitions. Exposed as Wiremock's static files
-│   │           │       └── responses
-│   │           │           ├── {some-response-01-name}.json # contains mock response - it can be used in the mapping definition
-│   │           │           └── {some-response-02-name}.json
-│   │           └── mappings
-│   │               └── {external-open-api-service-name}
-│   │                   ├── {endpoint-1-mapping}.json # definition of Wiremock's mappings - it describes how the mock service should respond
-│   │                   └── {endpoint-2-mapping}.json
-│   └── setup # setup Nu Designer configuration, Kafka's topics ans JSON schemas (optional)
-│       ├── kafka
-│       │   └── topics.txt # it contains list of topics name which should be created (topic per line)
-│       ├── nu-designer
-│       │   ├── {some-configuration-01-name}.conf # it contains part of Nu configuration (it's HOCON file)
-│       │   └── {some-configuration-02-name}.conf
-│       ├── schema-registry
-│       │   ├── {topic-01-name}.schema.json # it contains JSON schema definition for topic "topic-01-name"
-│       │   └── {topic-02-name}.schema.json
+│   │   └── db 
+│   │       ├── {db-schema-01-name}.sql # script with DDLs to import 
+│   │       └── {db-schema-02-name}.sql
+│   │   └── http-service
+│   │       └── {external-open-api-service-name} # name of an external Open API service
+│   │           ├── __files
+│   │           │   └── {external-open-api-service-name}
+│   │           │       ├── openapi
+│   │           │       │   └── {api-name}.yaml # it contains the external Open API service definitions. Exposed as Wiremock's static files
+│   │           │       └── responses
+│   │           │           ├── {some-response-01-name}.json # contains mock response - it can be used in the mapping definition
+│   │           │           └── {some-response-02-name}.json
+│   │           └── mappings
+│   │               └── {external-open-api-service-name}
+│   │                   ├── {endpoint-1-mapping}.json # definition of Wiremock's mappings - it describes how the mock service should respond
+│   │                   └── {endpoint-2-mapping}.json
+│   └── setup # setup Nu Designer configuration, Kafka's topics ans JSON schemas (optional)
+│       ├── kafka
+│       │   └── topics.txt # it contains list of topics name which should be created (topic per line)
+│       ├── nu-designer
+│       │   ├── {some-configuration-01-name}.conf # it contains part of Nu configuration (it's HOCON file)
+│       │   └── {some-configuration-02-name}.conf
+│       ├── schema-registry
+│       │   ├── {topic-01-name}.schema.json # it contains JSON schema definition for topic "topic-01-name"
+│       │   └── {topic-02-name}.schema.json
 |       └── flink 
-│           └── {ddl-script}.sql # it contains Flink SQL script to create Flink tables
+│           └── {ddl-script}.sql # it contains Flink SQL script to create Flink tables
 └── {scenario-example-2} # the next scenario
-    ├── [...]
+    ├── [...]
 ```
 
 ### Scenario JSON
