@@ -15,7 +15,7 @@ EXAMPLE_SCENARIO_NAME=$2
 
 echo "Starting to create Nu HTTP endpoints..."
 
-for ITEM in "$SCENARIO_EXAMPLE_DIR_PATH/setup/nu-designer/endpoints"/*; do
+for ITEM in "$SCENARIO_EXAMPLE_DIR_PATH/setup/cloud-endpoints"/*; do
     if [ ! -f "$ITEM" ]; then
       continue
     fi
@@ -31,7 +31,7 @@ for ITEM in "$SCENARIO_EXAMPLE_DIR_PATH/setup/nu-designer/endpoints"/*; do
           exit 3
         }
 
-        SOURCE_NAME=$(echo "$record" | jq -er '.source') || {
+        SOURCE_NAME=$(echo "$record" | jq -er '.sourceName') || {
           red_echo "ERROR: Missing 'source' in $ITEM"
           exit 4
         }
