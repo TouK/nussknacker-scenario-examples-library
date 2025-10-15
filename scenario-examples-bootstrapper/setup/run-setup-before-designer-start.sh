@@ -17,7 +17,7 @@ for FOLDER in /scenario-examples/*; do
     ./kafka/setup-topics.sh "$FOLDER"
     ./flink/execute-flink-ddl-scripts.sh "$FOLDER"
     
-    echo -e "Scenarios resources from ${GREEN}$FOLDER${RESET} directory configured!\n\n"
+    echo -e "Scenario resources from ${GREEN}$FOLDER${RESET} directory configured!\n\n"
   else
     echo "Skipping configuring from ${GREEN}$FOLDER${RESET} directory."
   fi
