@@ -5,7 +5,7 @@ cd "$(dirname "$0")"
 source ../utils/lib.sh
 configure_error_handling
 
-magenta_echo "-------- SETUP STAGE is starting... -------\n"
+magenta_echo "-------- SCENARIOS SETUP STAGE is starting... -------\n"
 
 shopt -s nullglob
 
@@ -29,9 +29,6 @@ for FOLDER in /scenario-examples/*; do
     SCENARIO_FILE_PATH="${json_files[0]}"
     SCENARIO_NAME="$(basename "$SCENARIO_FILE_PATH" ".json")"
 
-    ./schema-registry/setup-schemas.sh "$FOLDER"
-    ./kafka/setup-topics.sh "$FOLDER"
-    ./flink/execute-flink-ddl-scripts.sh "$FOLDER"
     ./nu/create-http-endpoints.sh "$FOLDER" "$SCENARIO_NAME"
     ./nu/customize-nu-configuration.sh "$FOLDER"
     ./nu/import-and-deploy-example-scenarios.sh "$FOLDER" "$SCENARIO_NAME" "$SCENARIO_FILE_PATH"
@@ -42,4 +39,4 @@ for FOLDER in /scenario-examples/*; do
   fi
 done
 
-magenta_echo "-------- SETUP STAGE is finished! ---------\n\n"
+magenta_echo "-------- SCENARIOS SETUP STAGE is finished! ---------\n\n"

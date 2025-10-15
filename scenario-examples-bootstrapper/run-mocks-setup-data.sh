@@ -23,22 +23,34 @@ if /app/mocks/db/is-postgres-ready.sh && /app/mocks/http-service/is-wiremock-rea
   fi
 
   /app/mocks/configure.sh
-  /app/setup/run-setup.sh
-  /app/data/keep-sending.sh
-  
-  green_echo "------ Nu scenarios library sucessfully bootstrapped! ----\n\n"
-  
-  touch /app/.status/healthy
-  
-  if [ "$STOP_WHEN_NO_GENERATOR_OR_MOCK_ENABLED" = "true" ]; then 
-    if [ ! -f /app/.status/generators-running ] && [ ! -f /app/.status/mocks-used ]; then
-      green_echo "No generators or mocks used, stopping the library service..."
-      exit 0
-    fi
-  fi
+  /app/setup/run-setup-before-designer-start.sh
 
-  # loop forever (you can use manually called utils scripts now)
-  tail -f /dev/null
+  if /app/utils/nu/is-designer-ready.sh; then
+    green_echo "------ Designer is ready. Importing scenarios... ---------\n"
+
+    /app/setup/run-setup-after-designer-start.sh
+
+    /app/data/keep-sending.sh
+
+    green_echo "------ Nu scenarios library sucessfully bootstrapped! ----\n\n"
+
+    touch /app/.status/healthy
+
+    if [ "$STOP_WHEN_NO_GENERATOR_OR_MOCK_ENABLED" = "true" ]; then
+      if [ ! -f /app/.status/generators-running ] && [ ! -f /app/.status/mocks-used ]; then
+        green_echo "No generators or mocks used, stopping the library service..."
+        exit 0
+      fi
+    fi
+
+    # loop forever (you can use manually called utils scripts now)
+    tail -f /dev/null
+
+  else
+    echo -e "\nWaiting for Designer to be up and ready...\n"
+    sleep 5
+    exit 1
+  fi
 else
   echo -e "\nWaiting for Postgres and Wiremock to be up and ready...\n"
   sleep 5
