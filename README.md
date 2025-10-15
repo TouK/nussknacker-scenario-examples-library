@@ -268,6 +268,9 @@ scenario-examples-library
 │       │   └── {topic-02-name}.schema.json
 |       └── flink 
 │           └── {ddl-script}.sql # it contains Flink SQL script to create Flink tables
+|       └── cloud-endpoints 
+│           └── {endpoints-01}.json # it contains definition of endpoints to create on Nussknacker Cloud structured as JSON list with records containing 'sourceName' and 'endpointName' fields.
+│           └── {endpoints-02}.json
 └── {scenario-example-2} # the next scenario
     ├── [...]
 ```
