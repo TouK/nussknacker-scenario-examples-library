@@ -131,7 +131,7 @@ function format_env_name() {
   fi
 
   NAME=$1
-  echo "${NAME}" | sed 's/[0-9][0-9]*_//' | tr '-' '_' | awk '{print toupper($0)}'
+  echo "${NAME}" | sed 's/^[0-9][0-9]*_//' | tr '-' '_' | awk '{print toupper($0)}'
 }
 
 function are_embedded_examples_active() {
