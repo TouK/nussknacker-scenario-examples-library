@@ -32,8 +32,8 @@ if [ ! -f "$SCENARIO_FILE_PATH" ]; then
 fi
 
 function create_empty_scenario() {
-  if [ "$#" -ne 4 ]; then
-    red_echo "ERROR: Four parameters required: 1) scenario name, 2) processing mode, 3) category, 4) engine\n"
+  if [ "$#" -ne 5 ]; then
+    red_echo "ERROR: Five parameters required: 1) scenario name, 2) processing mode, 3) category, 4) engine 5) isFragment\n"
     exit 11
   fi
 
@@ -43,13 +43,14 @@ function create_empty_scenario() {
   local PROCESSING_MODE=$2
   local CATEGORY=$3
   local ENGINE=$4
+  local IS_FRAGMENT=$5
 
   local REQUEST_BODY="{
     \"name\": \"$SCENARIO_NAME\",
     \"processingMode\": \"$PROCESSING_MODE\",
     \"category\": \"$CATEGORY\",
     \"engineSetupName\": \"$ENGINE\",
-    \"isFragment\": false
+    \"isFragment\": $IS_FRAGMENT
   }"
 
   local RESPONSE
@@ -158,6 +159,7 @@ function save_scenario() {
 }
 
 SCENARIO_FILE_NAME="${SCENARIO_FILE_PATH%.*}"
+META_DATA_TYPE=$(jq -r .metaData.additionalFields.metaDataType < "$SCENARIO_FILE_PATH")
 case "$SCENARIO_FILE_NAME" in
   *streaming)
     echo "Assuming that scenario in $SCENARIO_FILE_PATH is a Streaming scenario..." >&2
@@ -176,9 +178,12 @@ case "$SCENARIO_FILE_NAME" in
     ;;
   *)
     echo "Cannot distinguish processing mode based on scenario filename. Using metadata..." >&2
-    META_DATA_TYPE=$(jq -r .metaData.additionalFields.metaDataType < "$SCENARIO_FILE_PATH")
     case "$META_DATA_TYPE" in
       "StreamMetaData")
+        ENGINE="Flink"
+        PROCESSING_MODE="Unbounded-Stream"
+        ;;
+      "FragmentSpecificData")
         ENGINE="Flink"
         PROCESSING_MODE="Unbounded-Stream"
         ;;
@@ -198,6 +203,17 @@ case "$SCENARIO_FILE_NAME" in
     ;;
 esac
 
-create_empty_scenario "$SCENARIO_NAME" "$PROCESSING_MODE" "$CATEGORY" "$ENGINE"
+case "$META_DATA_TYPE" in
+  "FragmentSpecificData")
+    IS_FRAGMENT=true
+    ;;
+  *)
+    IS_FRAGMENT=false
+    ;;
+esac
+
+create_empty_scenario "$SCENARIO_NAME" "$PROCESSING_MODE" "$CATEGORY" "$ENGINE" "$IS_FRAGMENT"
 SCENARIO_GRAPH=$(import_scenario_from_file "$SCENARIO_NAME" "$SCENARIO_FILE_PATH")
-save_scenario "$SCENARIO_NAME" "$SCENARIO_GRAPH"
+NEW_SCENARIO_VERSION=$(save_scenario "$SCENARIO_NAME" "$SCENARIO_GRAPH")
+
+echo "$IS_FRAGMENT" "$NEW_SCENARIO_VERSION"
