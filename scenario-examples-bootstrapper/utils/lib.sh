@@ -183,7 +183,7 @@ function on_exit() {
 
 
 function configure_error_handling() {
-  set -eE -o pipefail
+  set -eE
 
   TRACE_LOG=$(mktemp)
   exec 19>"$TRACE_LOG"
