@@ -142,9 +142,13 @@ if [[ "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
   redeploy_scenario "$SCENARIO_NAME"
 elif [[ "$DEPLOYMENT_STATUS" == "CANCELED" || "$DEPLOYMENT_STATUS" == "NOT_DEPLOYED" ]]; then
   deploy_scenario "$SCENARIO_NAME"
+elif [[ "$DEPLOYMENT_STATUS" == "DURING_DEPLOY" || "$DEPLOYMENT_STATUS" == "FINISHED" ]]; then
+  # Do nothing, skip to waiting for RUNNING or FINISHED state
+  # TODO: For DURING_DEPLOY: Cancel and then deploy when the deployed version is different than expected. As of now, NEW_SCENARIO_VERSION may be null here because Nussknacker doesn't return this information for DURING_DEPLOY status.
+  :
 else
-  ./cancel-scenario-and-wait-for-canceled-state.sh "$SCENARIO_NAME"
-  deploy_scenario "$SCENARIO_NAME"
+  red_echo "ERROR: Unexpected status: '$DEPLOYMENT_STATUS' for scenario '$SCENARIO_NAME'\n"
+  exit 5
 fi
 
 while true; do
