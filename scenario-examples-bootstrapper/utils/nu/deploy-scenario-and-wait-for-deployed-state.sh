@@ -119,7 +119,9 @@ function check_deployment_status() {
   SCENARIO_STATUS=$(echo "$RESPONSE_BODY" | jq -r '.status.name')
   local DEPLOYED_VERSION
   DEPLOYED_VERSION=$(echo "$RESPONSE_BODY" | jq -r '.status.versionId')
-  echo "$SCENARIO_STATUS" "$DEPLOYED_VERSION"
+  local STATUS_DESCRIPTION
+  STATUS_DESCRIPTION=$(echo "$RESPONSE_BODY" | jq -r '.description')
+  echo "$SCENARIO_STATUS" "$DEPLOYED_VERSION" "$STATUS_DESCRIPTION"
 }
 
 echo "Deploying scenario '$SCENARIO_NAME'..."
@@ -128,8 +130,8 @@ START_TIME=$(date +%s)
 END_TIME=$((START_TIME + TIMEOUT_SECONDS))
 
 DEPLOYMENT_STATUS_RESULT=$(check_deployment_status "$SCENARIO_NAME")
-read -r DEPLOYMENT_STATUS DEPLOYED_VERSION <<< "$DEPLOYMENT_STATUS_RESULT"
-echo "Scenario '$SCENARIO_NAME' status is $DEPLOYMENT_STATUS, version is $DEPLOYED_VERSION; imported version was: $NEW_SCENARIO_VERSION"
+read -r DEPLOYMENT_STATUS DEPLOYED_VERSION STATUS_DESCRIPTION <<< "$DEPLOYMENT_STATUS_RESULT"
+echo "Scenario '$SCENARIO_NAME' status is $DEPLOYMENT_STATUS, status description is '$STATUS_DESCRIPTION', version is $DEPLOYED_VERSION; imported version was: $NEW_SCENARIO_VERSION"
 
 if [[ "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
   if [[ "${DISABLE_SCENARIO_REDEPLOY,,}" == "true" ]]; then
@@ -143,8 +145,14 @@ if [[ "$DEPLOYMENT_STATUS" == "RUNNING" ]]; then
 elif [[ "$DEPLOYMENT_STATUS" == "CANCELED" || "$DEPLOYMENT_STATUS" == "NOT_DEPLOYED" ]]; then
   deploy_scenario "$SCENARIO_NAME"
 elif [[ "$DEPLOYMENT_STATUS" == "DURING_DEPLOY" || "$DEPLOYMENT_STATUS" == "FINISHED" ]]; then
-  # Do nothing, skip to waiting for RUNNING or FINISHED state
+  # Do nothing, skip to waiting for RUNNING or FINISHED status
   # TODO: For DURING_DEPLOY: Cancel and then deploy when the deployed version is different than expected. As of now, NEW_SCENARIO_VERSION may be null here because Nussknacker doesn't return this information for DURING_DEPLOY status.
+  :
+elif [[ "$DEPLOYMENT_STATUS" == "PROBLEM" ]]; then
+  echo "Scenario: '$SCENARIO_NAME' status is '$DEPLOYMENT_STATUS'. Performing Cancel and Deploy.\n"
+  # Scenarios relying on mocked services may have PROBLEM status if Nussknacker starts before these services are available
+  ./cancel-scenario-and-wait-for-canceled-state.sh "$SCENARIO_NAME"
+  deploy_scenario "$SCENARIO_NAME"
   :
 else
   red_echo "ERROR: Unexpected status: '$DEPLOYMENT_STATUS' for scenario '$SCENARIO_NAME'\n"
