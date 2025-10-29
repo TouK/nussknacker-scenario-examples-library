@@ -148,8 +148,8 @@ elif [[ "$DEPLOYMENT_STATUS" == "DURING_DEPLOY" || "$DEPLOYMENT_STATUS" == "FINI
   # Do nothing, skip to waiting for RUNNING or FINISHED status
   # TODO: For DURING_DEPLOY: Cancel and then deploy when the deployed version is different than expected. As of now, NEW_SCENARIO_VERSION may be null here because Nussknacker doesn't return this information for DURING_DEPLOY status.
   :
-elif [[ "$DEPLOYMENT_STATUS" == "PROBLEM" ]]; then
-  echo "Scenario: '$SCENARIO_NAME' status is '$DEPLOYMENT_STATUS'. Performing Cancel and Deploy.\n"
+elif [[ "$DEPLOYMENT_STATUS" == "PROBLEM" && "$STATUS_DESCRIPTION" != "Failed to get a state of the scenario." ]]; then
+  echo -e "Scenario: '$SCENARIO_NAME' status is '$DEPLOYMENT_STATUS'. Performing Cancel and Deploy.\n"
   # Scenarios relying on mocked services may have PROBLEM status if Nussknacker starts before these services are available
   ./cancel-scenario-and-wait-for-canceled-state.sh "$SCENARIO_NAME"
   deploy_scenario "$SCENARIO_NAME"
