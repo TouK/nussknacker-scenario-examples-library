@@ -14,7 +14,7 @@ SCENARIO_EXAMPLE_DIR_PATH=${1%/}
 EXAMPLE_SCENARIO_NAME=$2
 EXAMPLE_SCENARIO_FILE=$3
 
-echo "Starting to import and deploy example scenario..."
+echo "Starting to import and deploy example scenario $EXAMPLE_SCENARIO_NAME from $EXAMPLE_SCENARIO_FILE..."
 
 LOAD_RESULT=$(../../utils/nu/load-scenario-from-json-file.sh "$EXAMPLE_SCENARIO_NAME" "$EXAMPLE_SCENARIO_FILE")
 read -r IS_FRAGMENT NEW_SCENARIO_VERSION <<< "$LOAD_RESULT"

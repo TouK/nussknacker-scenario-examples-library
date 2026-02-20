@@ -1,3 +1,2 @@
-#!/bin/bash -e
-
-/sbin/my_init
+#!/bin/bash
+exec /sbin/my_init

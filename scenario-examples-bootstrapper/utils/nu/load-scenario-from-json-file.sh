@@ -8,17 +8,17 @@ configure_error_handling
 source /configs/nu-designer
 
 if [ "$#" -lt 2 ]; then
-  red_echo "ERROR: Two parameters required: 1) scenario name, 2) scenario file path\n"
+  red_echo "ERROR: Two parameters required: 1) scenario name, 2) scenario file path\n" >&2
   exit 1
 fi
 
 if ! [ -v NU_DESIGNER_URL ] || [ -z "$NU_DESIGNER_URL" ]; then
-  red_echo "ERROR: required variable NU_DESIGNER_URL not set or empty\n"
+  red_echo "ERROR: required variable NU_DESIGNER_URL not set or empty\n" >&2
   exit 2
 fi
 
 if ! [ -v NU_DESIGNER_AUTH_HEADER ] || [ -z "$NU_DESIGNER_AUTH_HEADER" ]; then
-  red_echo "ERROR: required variable NU_DESIGNER_AUTH_HEADER not set or empty\n"
+  red_echo "ERROR: required variable NU_DESIGNER_AUTH_HEADER not set or empty\n" >&2
   exit 3
 fi
 
@@ -27,13 +27,13 @@ SCENARIO_FILE_PATH=$2
 CATEGORY=${3:-"Default"}
 
 if [ ! -f "$SCENARIO_FILE_PATH" ]; then
-  red_echo "ERROR: Cannot find file $SCENARIO_FILE_PATH with scenario\n"
+  red_echo "ERROR: Cannot find file $SCENARIO_FILE_PATH with scenario\n" >&2
   exit 4
 fi
 
 function create_empty_scenario() {
   if [ "$#" -ne 5 ]; then
-    red_echo "ERROR: Five parameters required: 1) scenario name, 2) processing mode, 3) category, 4) engine 5) isFragment\n"
+    red_echo "ERROR: Five parameters required: 1) scenario name, 2) processing mode, 3) category, 4) engine 5) isFragment\n" >&2
     exit 11
   fi
 
@@ -71,13 +71,13 @@ function create_empty_scenario() {
       echo "Scenario '$SCENARIO_NAME' already exists." >&2
       return 0
     else
-      red_echo "ERROR: Cannot create empty scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+      red_echo "ERROR: Cannot create empty scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n" >&2
       exit 12
     fi
   elif [ "$HTTP_STATUS" != "201" ]; then
     local RESPONSE_BODY
     RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
-    red_echo "ERROR: Cannot create empty scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+    red_echo "ERROR: Cannot create empty scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n" >&2
     exit 13
   fi
 
@@ -86,7 +86,7 @@ function create_empty_scenario() {
 
 function import_scenario_from_file() {
   if [ "$#" -ne 2 ]; then
-    red_echo "ERROR: Two parameters required: 1) scenario name, 2) scenario file path\n"
+    red_echo "ERROR: Two parameters required: 1) scenario name, 2) scenario file path\n" >&2
     exit 21
   fi
 
@@ -114,14 +114,14 @@ function import_scenario_from_file() {
     SCENARIO_GRAPH=$(echo "$RESPONSE_BODY" | jq '.scenarioGraph')
     echo "$SCENARIO_GRAPH"
   else
-    red_echo "ERROR: Cannot import scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+    red_echo "ERROR: Cannot import scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n" >&2
     exit 22
   fi
 }
 
 function save_scenario() {
   if [ "$#" -ne 2 ]; then
-    red_echo "ERROR: Two parameters required: 1) scenario name, 2) scenario graph JSON representation\n"
+    red_echo "ERROR: Two parameters required: 1) scenario name, 2) scenario graph JSON representation\n" >&2
     exit 31
   fi
 
@@ -148,7 +148,7 @@ function save_scenario() {
   local RESPONSE_BODY
   RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
   if [ "$HTTP_STATUS" != "200" ]; then
-    red_echo "ERROR: Cannot save scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n"
+    red_echo "ERROR: Cannot save scenario '$SCENARIO_NAME'.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY\n" >&2
     exit 32
   fi
 
@@ -162,22 +162,21 @@ SCENARIO_FILE_NAME="${SCENARIO_FILE_PATH%.*}"
 META_DATA_TYPE=$(jq -r .metaData.additionalFields.metaDataType < "$SCENARIO_FILE_PATH")
 case "$SCENARIO_FILE_NAME" in
   *streaming)
-    echo "Assuming that scenario in $SCENARIO_FILE_PATH is a Streaming scenario..." >&2
+    echo "Assuming that scenario is a Streaming scenario..." >&2
     ENGINE="Flink"
     PROCESSING_MODE="Unbounded-Stream"
     ;;
   *request-response)
-    echo "Assuming that scenario in $SCENARIO_FILE_PATH is a Request-Response scenario..." >&2
+    echo "Assuming that scenario is a Request-Response scenario..." >&2
     ENGINE="Lite Embedded"
     PROCESSING_MODE="Request-Response"
     ;;
   *batch)
-    echo "Assuming that scenario in $SCENARIO_FILE_PATH is a Batch scenario..." >&2
+    echo "Assuming that scenario is a Batch scenario..." >&2
     ENGINE="Flink"
     PROCESSING_MODE="Bounded-Stream"
     ;;
   *)
-    echo "Cannot distinguish processing mode based on scenario filename. Using metadata..." >&2
     case "$META_DATA_TYPE" in
       "StreamMetaData")
         ENGINE="Flink"
@@ -196,10 +195,11 @@ case "$SCENARIO_FILE_NAME" in
         PROCESSING_MODE="Request-Response"
         ;;
       *)
-        red_echo "ERROR: Cannot import scenario with metadata type: $META_DATA_TYPE\n"
+        red_echo "ERROR: Cannot import scenario with metadata type: $META_DATA_TYPE\n" >&2
         exit 4
         ;;
     esac
+    echo "Read scenario type from metadata ($META_DATA_TYPE): $ENGINE / $PROCESSING_MODE" >&2
     ;;
 esac
 

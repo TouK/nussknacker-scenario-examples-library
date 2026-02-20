@@ -4,7 +4,7 @@ RUN apt-get update && \
     apt-get install -y wget && \
     wget -P /var/wiremock/extensions https://repo1.maven.org/maven2/org/wiremock/extensions/wiremock-faker-extension-standalone/0.2.0/wiremock-faker-extension-standalone-0.2.0.jar
 
-FROM phusion/baseimage:noble-1.0.0
+FROM phusion/baseimage:noble-1.0.2
 
 ENTRYPOINT ["/entrypoint.sh"]
 
@@ -22,6 +22,13 @@ RUN apt update && \
     apt -y install openjdk-11-jre-headless && \
     apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     curl https://raw.githubusercontent.com/birdayz/kaf/master/godownloader.sh | BINDIR=/bin bash 
+
+# phusion/baseimage starts syslog-ng, cron and sshd - we don't need them
+RUN rm /etc/my_init.d/10_syslog-ng.init && \
+    rm /etc/my_init.post_shutdown.d/10_syslog-ng.shutdown && \
+    rm /etc/my_init.d/00_regen_ssh_host_keys.sh && \
+    rm -rf /etc/service/cron && \
+    rm -rf /etc/service/sshd
 
 # WIREMOCK & POSTGRES
 COPY --from=wiremock /var/wiremock /var/wiremock
