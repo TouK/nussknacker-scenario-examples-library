@@ -14,7 +14,7 @@
   },
   "nodes" : [
     {
-      "id" : "Customers-related events",
+      "id" : "65de4ac9-f65b-3282-8afa-f684119697bb",
       "ref" : {
         "typ" : "kafka",
         "parameters" : [
@@ -47,7 +47,7 @@
     {
       "nextFalse" : [
       ],
-      "id" : "May client be interested in the new offer?",
+      "id" : "7dec261c-d0a5-3710-aafa-599daf344c32",
       "expression" : {
         "language" : "spel",
         "expression" : "#input.eventType.toString == \"ClientBrowseOffers\" || \n#input.eventType.toString == \"ClientSentTerminationLetter\""
@@ -64,7 +64,7 @@
       "name" : "May client be interested in the new offer?"
     },
     {
-      "id" : "Get Customer Profile from API",
+      "id" : "0634000a-4753-3067-a685-1e32fccdb08a",
       "service" : {
         "id" : "OfferCustomerProposalScenarioService-openAPI",
         "parameters" : [
@@ -98,7 +98,7 @@
     {
       "nextFalse" : [
       ],
-      "id" : "Is adult customer?",
+      "id" : "0e6d45b4-54dc-36ca-bfd0-394492af3032",
       "expression" : {
         "language" : "spel",
         "expression" : "#profile.customerAge > 18"
@@ -115,7 +115,7 @@
       "name" : "Is adult customer?"
     },
     {
-      "id" : "Get Offers for a given Customer Type from API",
+      "id" : "887fc3f7-7d42-3845-ae71-1b7a1897c7d6",
       "service" : {
         "id" : "OfferCustomerProposalScenarioService-openAPI",
         "parameters" : [
@@ -149,7 +149,7 @@
     {
       "nextFalse" : [
       ],
-      "id" : "At least one offer exists?",
+      "id" : "c37dc1de-477f-35c3-a4bc-0aaddaf7747f",
       "expression" : {
         "language" : "spel",
         "expression" : "#offers.size > 0"
@@ -166,7 +166,7 @@
       "name" : "At least one offer exists?"
     },
     {
-      "id" : "Pick the best offer",
+      "id" : "ac61c3d1-d8ab-38ff-8136-0de8e2598bcf",
       "varName" : "offer",
       "value" : {
         "language" : "spel",
@@ -185,7 +185,7 @@
     {
       "nextFalse" : [
         {
-          "id" : "Random 4% discount",
+          "id" : "538398e9-967a-37a9-8876-c4bf65d438a7",
           "varName" : "specialDiscountPercentage",
           "value" : {
             "language" : "spel",
@@ -203,13 +203,13 @@
         },
         {
           "definition" : {
-            "id" : "Random 4% discount",
-            "joinId" : "Union"
+            "id" : "538398e9-967a-37a9-8876-c4bf65d438a7",
+            "joinId" : "aef12e90-3e60-3a48-95a1-6b393bfdec8c"
           },
           "type" : "BranchEndData"
         }
       ],
-      "id" : "Is premium customer?",
+      "id" : "9a733427-b6f5-3718-8f0a-cfd5053173b7",
       "expression" : {
         "language" : "spel",
         "expression" : "#profile.isPremiumCustomer"
@@ -226,7 +226,7 @@
       "name" : "Is premium customer?"
     },
     {
-      "id" : "Special discount depending on day of week (decision table)",
+      "id" : "146161f4-5845-35a6-b824-3c0eeb4eb72b",
       "service" : {
         "id" : "decision-table",
         "parameters" : [
@@ -258,7 +258,7 @@
       "name" : "Special discount depending on day of week (decision table)"
     },
     {
-      "id" : "Extract the special discount",
+      "id" : "a4ca63ea-7220-321e-a700-61f3cfe76c5b",
       "varName" : "specialDiscountPercentage",
       "value" : {
         "language" : "spel",
@@ -276,8 +276,8 @@
     },
     {
       "definition" : {
-        "id" : "Extract the special discount",
-        "joinId" : "Union"
+        "id" : "a4ca63ea-7220-321e-a700-61f3cfe76c5b",
+        "joinId" : "aef12e90-3e60-3a48-95a1-6b393bfdec8c"
       },
       "type" : "BranchEndData"
     }
@@ -285,14 +285,14 @@
   "additionalBranches" : [
     [
       {
-        "id" : "Union",
+        "id" : "aef12e90-3e60-3a48-95a1-6b393bfdec8c",
         "outputVar" : "context",
         "nodeType" : "union",
         "parameters" : [
         ],
         "branchParameters" : [
           {
-            "branchId" : "Random 4% discount",
+            "branchId" : "538398e9-967a-37a9-8876-c4bf65d438a7",
             "parameters" : [
               {
                 "name" : "Output expression",
@@ -304,7 +304,7 @@
             ]
           },
           {
-            "branchId" : "Extract the special discount",
+            "branchId" : "a4ca63ea-7220-321e-a700-61f3cfe76c5b",
             "parameters" : [
               {
                 "name" : "Output expression",
@@ -327,7 +327,7 @@
         "name" : "Union"
       },
       {
-        "id" : "Calculate final price of the offer",
+        "id" : "5b68a6a2-4fd4-3fe8-a4da-f7459a474f23",
         "varName" : "finalPrice",
         "value" : {
           "language" : "spel",
@@ -344,7 +344,7 @@
         "name" : "Calculate final price of the offer"
       },
       {
-        "id" : "Prepare full offer message",
+        "id" : "a5a8b662-f162-352d-ac2d-91326846f8c7",
         "varName" : "offerMessage",
         "value" : {
           "language" : "spel",
@@ -361,7 +361,7 @@
         "name" : "Prepare full offer message"
       },
       {
-        "id" : "Offer proposal to customer",
+        "id" : "d81c8192-841b-361a-9849-d4047ba574ca",
         "ref" : {
           "typ" : "kafka",
           "parameters" : [

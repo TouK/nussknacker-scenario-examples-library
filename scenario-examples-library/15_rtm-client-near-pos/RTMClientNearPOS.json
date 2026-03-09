@@ -14,7 +14,7 @@
   },
   "nodes": [
     {
-      "id": "stream of given clients geo location",
+      "id": "96dfddcb-678d-3edd-aa93-6bcacd3e2144",
       "ref": {
         "typ": "kafka",
         "parameters": [
@@ -45,7 +45,7 @@
       "name": "stream of given clients geo location"
     },
     {
-      "id": "enrich with contact history data",
+      "id": "fadfdfc2-503b-3613-a335-b8f639f3ac03",
       "service": {
         "id": "customers-data-query-enricher",
         "parameters": [
@@ -93,7 +93,7 @@
     {
       "nextFalse": [
       ],
-      "id": "client is not contacted in last X Days",
+      "id": "1108da95-e0fb-3210-8d2a-301411f74b4e",
       "expression": {
         "language": "spel",
         "expression": "#contact_history_entry.empty"
@@ -110,7 +110,7 @@
       "name": "client is not contacted in last X Days"
     },
     {
-      "id": "enrich with data from list of blocked clients",
+      "id": "080eea21-77ff-34b7-a59a-66824d0272a0",
       "service": {
         "id": "customers-data-lookup-enricher",
         "parameters": [
@@ -158,7 +158,7 @@
     {
       "nextFalse": [
       ],
-      "id": "client is not blocked",
+      "id": "ba78c640-4eb6-3c5b-9e8c-b60634c0eae4",
       "expression": {
         "language": "spel",
         "expression": "#is_client_on_blocked_list == null"
@@ -175,7 +175,7 @@
       "name": "client is not blocked"
     },
     {
-      "id": "enrich with client data",
+      "id": "f07d4294-ccf0-35f5-bbf3-625b8ee59adb",
       "service": {
         "id": "customers-data-lookup-enricher",
         "parameters": [
@@ -221,7 +221,7 @@
       "name": "enrich with client data"
     },
     {
-      "id": "extract consents from client data",
+      "id": "9606fdf1-d432-396d-8dde-f38a6ddc0861",
       "varName": "consents",
       "value": {
         "language": "spel",
@@ -240,7 +240,7 @@
     {
       "nextFalse": [
       ],
-      "id": "client has marketing consents",
+      "id": "7aff6b0e-5c00-3151-968b-2db9c4e77ee6",
       "expression": {
         "language": "spel",
         "expression": "NOT #consents.isEmpty"
@@ -257,7 +257,7 @@
       "name": "client has marketing consents"
     },
     {
-      "id": "enrich with POS info",
+      "id": "ede6a1c2-c7f4-30a9-b754-068deb975d9f",
       "service": {
         "id": "pos-data-lookup-enricher",
         "parameters": [
@@ -305,7 +305,7 @@
     {
       "nextFalse": [
       ],
-      "id": "POS is currently opened",
+      "id": "2bee7e0a-4285-3e61-aa03-72bf46bf94ff",
       "expression": {
         "language": "spel",
         "expression": "#pos_data != null AND #pos_data.open_hour != null AND #pos_data.close_hour != null AND #DATE.isBetween(#DATE.nowAtZone('Europe/Warsaw').toLocalTime, #pos_data.open_hour, #pos_data.close_hour)"
@@ -322,7 +322,7 @@
       "name": "POS is currently opened"
     },
     {
-      "id": "Count when distance to POS is lower than 1 km",
+      "id": "9f435cf8-8d9e-3a6a-9379-cb2d8f133ffe",
       "outputVar": "agg_out",
       "nodeType": "aggregate-session",
       "parameters": [
@@ -382,7 +382,7 @@
     {
       "nextFalse": [
       ],
-      "id": "2 events received with location near POS from session of X time",
+      "id": "6c0ce232-e585-3aef-b39e-d19b197bcb7b",
       "expression": {
         "language": "spel",
         "expression": "#agg_out == 2"
@@ -399,7 +399,7 @@
       "name": "2 events received with location near POS from session of X time"
     },
     {
-      "id": "decisions priorities and notification content by consent and client type",
+      "id": "2272f671-ab26-34a7-9e5b-a4834eddc5c1",
       "service": {
         "id": "decision-table",
         "parameters": [
@@ -431,7 +431,7 @@
       "name": "decisions priorities and notification content by consent and client type"
     },
     {
-      "id": "choose best decision",
+      "id": "869ba873-606e-35d5-9ea2-00ff9975d062",
       "varName": "decision",
       "value": {
         "language": "spel",
@@ -458,7 +458,7 @@
           },
           "nodes": [
             {
-              "id": "SMS",
+              "id": "4cecb21b-4462-3b17-8436-739bf6301af2",
               "ref": {
                 "typ": "kafka",
                 "parameters": [
@@ -527,7 +527,7 @@
           },
           "nodes": [
             {
-              "id": "EMAIL",
+              "id": "61a649a3-3f28-39e5-a35f-bb7aff3a80d9",
               "ref": {
                 "typ": "kafka",
                 "parameters": [
@@ -596,7 +596,7 @@
           },
           "nodes": [
             {
-              "id": "PUSH",
+              "id": "73dabe44-3772-3eed-805a-1824a2c31550",
               "ref": {
                 "typ": "kafka",
                 "parameters": [
@@ -659,7 +659,7 @@
           ]
         }
       ],
-      "id": "split by notification type",
+      "id": "8e8fe8a6-0072-3c64-b551-48b3b7ccd38d",
       "expression": null,
       "exprVal": null,
       "additionalFields": {
