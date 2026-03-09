@@ -31,7 +31,7 @@ for ITEM in "$SCENARIO_EXAMPLE_DIR_PATH/setup/cloud-endpoints"/*; do
           exit 3
         }
 
-        SOURCE_NAME=$(echo "$record" | jq -er '.sourceName') || {
+        SOURCE_NAME=$(echo "$record" | jq -er '.sourceId') || {
           red_echo "ERROR: Missing 'source' in $ITEM"
           exit 4
         }
