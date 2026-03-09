@@ -13,7 +13,7 @@
     },
     "nodes": [
       {
-        "id": "request",
+        "id": "10573b87-3d2f-35a3-a5d5-58a45e328e47",
         "ref": {
           "typ": "request",
           "parameters": [
@@ -26,7 +26,8 @@
             "y": 0
           }
         },
-        "type": "Source"
+        "type": "Source",
+        "name": "request"
       },
       {
         "defaultNext": [
@@ -39,7 +40,7 @@
             },
             "nodes": [
               {
-                "id": "loan response",
+                "id": "9340b30c-ca3f-3a0d-8bb7-af5c886cb9a0",
                 "ref": {
                   "typ": "response",
                   "parameters": [
@@ -68,7 +69,8 @@
                     "y": 360
                   }
                 },
-                "type": "Sink"
+                "type": "Sink",
+                "name": "loan response"
               }
             ]
           },
@@ -89,7 +91,7 @@
                     },
                     "nodes": [
                       {
-                        "id": "Warsaw mortgage",
+                        "id": "8ad3cbbc-8c4a-3d09-b2d3-afc1c2402734",
                         "ref": {
                           "typ": "response",
                           "parameters": [
@@ -118,7 +120,8 @@
                             "y": 540
                           }
                         },
-                        "type": "Sink"
+                        "type": "Sink",
+                        "name": "Warsaw mortgage"
                       }
                     ]
                   },
@@ -129,7 +132,7 @@
                     },
                     "nodes": [
                       {
-                        "id": "Other city mortgage",
+                        "id": "9927c30a-ff96-385a-aebc-e2be08157721",
                         "ref": {
                           "typ": "response",
                           "parameters": [
@@ -165,12 +168,13 @@
                             "y": 540
                           }
                         },
-                        "type": "Sink"
+                        "type": "Sink",
+                        "name": "Other city mortgage"
                       }
                     ]
                   }
                 ],
-                "id": "switch",
+                "id": "b36eb6a5-4154-3730-9f00-4e1e61c87ce8",
                 "additionalFields": {
                   "description": null,
                   "layoutData": {
@@ -178,7 +182,8 @@
                     "y": 360
                   }
                 },
-                "type": "Switch"
+                "type": "Switch",
+                "name": "switch"
               }
             ]
           },
@@ -189,7 +194,7 @@
             },
             "nodes": [
               {
-                "id": "unknown",
+                "id": "ad921d60-4863-3625-8809-553a3db49a4a",
                 "ref": {
                   "typ": "response",
                   "parameters": [
@@ -218,12 +223,13 @@
                     "y": 360
                   }
                 },
-                "type": "Sink"
+                "type": "Sink",
+                "name": "unknown"
               }
             ]
           }
         ],
-        "id": "loan type",
+        "id": "b5f6c4c6-8f88-32d6-9194-b4c63e0b5e2f",
         "additionalFields": {
           "description": null,
           "layoutData": {
@@ -231,7 +237,8 @@
             "y": 180
           }
         },
-        "type": "Switch"
+        "type": "Switch",
+        "name": "loan type"
       }
     ],
     "additionalBranches": [

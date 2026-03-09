@@ -12,7 +12,7 @@
   },
   "nodes": [
     {
-      "id": "transactions",
+      "id": "c15b977d-d993-32ca-8623-fbdfb86827e8",
       "ref": {
         "typ": "kafka",
         "parameters": [
@@ -39,12 +39,13 @@
           "y": 0
         }
       },
-      "type": "Source"
+      "type": "Source",
+      "name": "transactions"
     },
     {
       "nextFalse": [
       ],
-      "id": "only large ones",
+      "id": "38c490b5-231d-35fd-99f1-f3a716200a56",
       "expression": {
         "language": "spel",
         "expression": "#input.amount > 20"
@@ -57,10 +58,11 @@
           "y": 180
         }
       },
-      "type": "Filter"
+      "type": "Filter",
+      "name": "only large ones"
     },
     {
-      "id": "send for audit",
+      "id": "c2e8965b-a237-38be-b97a-25b2f52d356d",
       "ref": {
         "typ": "kafka",
         "parameters": [
@@ -117,7 +119,8 @@
           "y": 360
         }
       },
-      "type": "Sink"
+      "type": "Sink",
+      "name": "send for audit"
     }
   ],
   "additionalBranches": [
