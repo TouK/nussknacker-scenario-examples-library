@@ -23,17 +23,18 @@ if ! [ -v NU_DESIGNER_AUTH_HEADER ] || [ -z "$NU_DESIGNER_AUTH_HEADER" ]; then
 fi
 
 SCENARIO_NAME=$1
-SOURCE_NAME=$2
+SOURCE_ID=$2
 ENDPOINT_NAME=$3
 
 REQUEST_BODY=$(jq -n \
   --arg endpointName "$ENDPOINT_NAME" \
-  --arg sourceName "$SOURCE_NAME" \
+  --arg sourceId "$SOURCE_ID" \
   '{
     actionName: "generate-endpoint",
     endpointName: $endpointName,
     nodeData: {
-      id: $sourceName,
+      id: $sourceId,
+      name: "stubName",
       ref: { typ: "webhook", parameters: [] },
       type: "Source"
     }
