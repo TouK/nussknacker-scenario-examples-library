@@ -34,7 +34,7 @@ function customize_nu_configuration() {
 
   if ! grep -qxF "$INCLUDE_CONF_LINE" "$APP_CUSTOMIZATION_FILE_PATH"; then
     echo "$INCLUDE_CONF_LINE" >> "$APP_CUSTOMIZATION_FILE_PATH"
-    ((ADDED_LINES++))
+    ADDED_LINES=$((ADDED_LINES + 1))
   fi
   echo "OK"
 }
@@ -67,8 +67,8 @@ for ITEM in "$SCENARIO_EXAMPLE_DIR_PATH/setup/nu-designer"/*; do
   customize_nu_configuration "$ITEM" "$SCENARIO_EXAMPLE_ID"
 done
 
-../../utils/nu/reload-configuration.sh
-RELOAD_EXIT_CODE=$?
+RELOAD_EXIT_CODE=0
+../../utils/nu/reload-configuration.sh || RELOAD_EXIT_CODE=$?
 
 if [ $RELOAD_EXIT_CODE -ne 0 ]; then
   echo "Failed to reload configuration (exit code: $RELOAD_EXIT_CODE). Cleaning up..."
